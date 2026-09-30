@@ -416,9 +416,9 @@ function person(x, y, s, p, o = {}) {
   out += op(pc, `<ellipse cx="5" cy="${headY - 1}" rx="2" ry="${blink}" fill="${INK}"/><ellipse cx="-6" cy="${headY - 1}" rx="2" ry="${blink}" fill="${INK}"/>`);
   out += ink(`M-5 ${headY + 7}q5 ${o.smile === false ? 0 : 4} 10 0`, pc, 2);
   if (o.glasses) out += ink(circ(-6, headY - 1, 5, 10) + circ(6, headY - 1, 5, 10) + `M-1 ${headY - 1}h2`, pc, 1.6);
-  if (o.hold) out += o.hold;
+  if (o.hold) out += op(pc, o.hold);
   out += tube(arm(1, arms[1]), pc, skin, 8);
-  if (o.front) out += o.front;
+  if (o.front) out += op(pc, o.front);
   return at(x, y, s * kid * (o.face === -1 ? 1 : 1), g(out, o.face === -1 ? 'scale(-1 1)' : ''));
 }
 // A walker moving from x0 to x1 during [t0, t0+dur], with gait synced to speed.

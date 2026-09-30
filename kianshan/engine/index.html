@@ -26,7 +26,7 @@ const stage = document.getElementById('stage');
 const subs = document.getElementById('subs');
 const zhEl = document.getElementById('zh'), enEl = document.getElementById('en');
 let TL = null;
-const XF = 0.8;   // cross-fade between scenes (seconds)
+const XF = 2.0;   // old scene fades out while the new one draws on (seconds)
 
 // Story scenes look slightly low so the action sits above the subtitle band.
 const CAM_DY = { s02_title: 0, s10_endcard: 0, s08_recent: 150 };
@@ -74,10 +74,12 @@ window.renderFrame = async function (f) {
   const local = T - sc.start;
   let body = '';
   // incoming scene fades in over the tail of the previous one
+  // The new scene draws itself over the old one while the old one fades,
+  // so there is never an empty page mid-transition.
   if (i > 0 && local < XF) {
     const prev = scs[i - 1];
-    body += sceneSVG(prev, prev.dur + local);
-    body += `<g opacity="${ease(local / XF).toFixed(3)}"><rect x="0" y="0" width="1920" height="1080" fill="#f4ecdc"/>${sceneSVG(sc, local)}</g>`;
+    body += `<g opacity="${(1 - ease(local / XF)).toFixed(3)}">${sceneSVG(prev, prev.dur + local)}</g>`;
+    body += `<g opacity="${eout(clamp(local / 0.35)).toFixed(3)}">${sceneSVG(sc, local)}</g>`;
   } else {
     body += sceneSVG(sc, local);
   }

@@ -6,3 +6,4 @@ kianshan/audio/stems/
 kianshan/qa/stills/
 kianshan/qa/sheet_*.png
 __pycache__/
+kianshan/output/*.mp4

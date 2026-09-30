@@ -47,6 +47,7 @@ def frame_stats():
     stats = []
     prev = None
     diffs = []
+    small = []   # 160x90 greyscale copies for the neighbour test
     while True:
         buf = p.stdout.read(w * h * 3)
         if len(buf) < w * h * 3:
@@ -56,10 +57,11 @@ def frame_stats():
         # ink coverage: pixels clearly darker than paper
         ink = (g < 150).mean()
         stats.append((g.mean(), g.std(), ink))
+        small.append(g.reshape(90, 2, 160, 2).mean((1, 3)).astype(np.uint8))
         diffs.append(0.0 if prev is None else float(np.abs(f - prev).mean()))
         prev = f
     p.wait()
-    return np.array(stats), np.array(diffs)
+    return np.array(stats), np.array(diffs), small
 
 
 def scene_of(fi):
@@ -73,7 +75,7 @@ def scene_of(fi):
 def main():
     mux()
     v, a, dur, nb = probe()
-    stats, diffs = frame_stats()
+    stats, diffs, small = frame_stats()
     n = len(stats)
     issues = []
     fade_from = int((tl["total"] - 1.6) * FPS)
@@ -90,7 +92,8 @@ def main():
     # while frame i-1 and i+1 look alike
     med = np.median(diffs[1:])
     for i in range(1, n - 1):
-        if diffs[i] > max(6 * med, 6) and diffs[i + 1] > max(6 * med, 6):
+        if diffs[i] > max(6 * med, 6) and diffs[i + 1] > max(6 * med, 6) and \
+                np.abs(small[i - 1].astype(np.float32) - small[i + 1]).mean() < 0.35 * min(diffs[i], diffs[i + 1]):
             issues.append((i, f"glitch spike (diff in {diffs[i]:.1f}, out {diffs[i + 1]:.1f}, median {med:.2f})"))
     # frozen: 45+ identical frames in a row (1.5 s) would mean motion stopped
     run_len = 0

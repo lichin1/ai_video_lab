@@ -1,76 +1,76 @@
 # 高雄市堅山慈善會簡介：旁白稿與資料來源
 
-片長 245.2 秒｜1920×1080｜30fps｜旁白 24 句（每句 30 字以內）
+片長 243.3 秒｜1920×1080｜30fps｜旁白 24 句，每句 30 字以內｜Gemini TTS（Sulafat 女聲，台灣口音、說故事語氣）
 
 ## 旁白稿（依場景）
 
-### 開場：地點（0:00.00，24.3 秒）
+### 開場：地點（0:00.00，24.5 秒）
 01. [0:05.50] 高雄北邊的仁武，田野與街巷之間，住著一群熱心人。  
     *In Renwu, north Kaohsiung, among fields and lanes, live warm-hearted people.*
-02. [0:13.87] 他們相信，一點一滴的善意，能讓家鄉更溫暖。  
+02. [0:14.07] 他們相信，一點一滴的善意，能讓家鄉更溫暖。  
     *They believe small acts of kindness can make their hometown warmer.*
 
-### 片名卡（0:24.27，12.5 秒）
-03. [0:29.27] 這是高雄市堅山慈善會的故事。  
+### 片名卡（0:24.50，12.6 秒）
+03. [0:29.50] 這是高雄市堅山慈善會的故事。  
     *This is the story of the Kaohsiung Jianshan Charity Association.*
 
-### 慈善會成立（0:36.77，20.5 秒）
-04. [0:40.77] 一群鄉親聚在一起，成立了堅山慈善會。  
+### 慈善會成立（0:37.07，21.2 秒）
+04. [0:41.07] 一群鄉親聚在一起，成立了堅山慈善會。  
     *A group of neighbours came together and founded the association.*
-05. [0:47.53] 會址設在仁武區仁林路，受高雄市社會局輔導。  
+05. [0:47.73] 會址設在仁武區仁林路，受高雄市社會局輔導。  
     *Based on Renlin Road, Renwu, it works under the city's Social Affairs Bureau.*
 
-### 歷任理事長（0:57.30，27.1 秒）
-06. [1:01.30] 歷任理事長一棒接一棒，把善的火炬傳下去。  
+### 歷任理事長（0:58.23，26.9 秒）
+06. [1:02.23] 歷任理事長一棒接一棒，把善的火炬傳下去。  
     *Chairperson after chairperson has carried the torch of kindness forward.*
-07. [1:08.40] 陳國泰理事長與夫人吳惠豐女士，以身作則。  
+07. [1:09.20] 陳國泰理事長與夫人吳惠豐女士，以身作則。  
     *Chairman Chen Kuo-tai and his wife, Ms. Wu Hui-feng, led by example.*
-08. [1:15.20] 他們走進社區，把關懷送到需要的人身邊。  
+08. [1:16.30] 他們走進社區，把關懷送到需要的人身邊。  
     *They walked into the community, bringing care to those in need.*
 
-### 清寒優秀學生獎助學金（1:24.37，34.3 秒）
-09. [1:28.37] 堅山最重要的工作之一，是清寒優秀學生獎助學金。  
+### 清寒優秀學生獎助學金（1:25.17，34.8 秒）
+09. [1:29.17] 堅山最重要的工作之一，是清寒優秀學生獎助學金。  
     *One of its key works is a scholarship for bright students in need.*
-10. [1:36.27] 仁武、大樹、鳥松、大社等地區的孩子都受惠。  
+10. [1:37.20] 仁武、大樹、鳥松、大社等地區的孩子都受惠。  
     *Children from Renwu, Dashu, Niaosong, Dashe and nearby benefit.*
-11. [1:43.23] 也鼓勵高雄的大學生，學業與品德兼優。  
+11. [1:45.03] 也鼓勵高雄的大學生，學業與品德兼優。  
     *It also encourages Kaohsiung university students to excel in study and character.*
-12. [1:49.67] 一份獎學金，讓努力的孩子能安心讀書。  
+12. [1:51.50] 一份獎學金，讓努力的孩子能安心讀書。  
     *One scholarship lets a hard-working child study without worry.*
 
-### 觀音山捐血活動（1:58.70，40.3 秒）
-13. [2:02.70] 每年，堅山至少舉辦一次捐血活動。  
+### 觀音山捐血活動（1:59.93，37.7 秒）
+13. [2:03.93] 每年，堅山至少舉辦一次捐血活動。  
     *Every year, Jianshan holds at least one blood drive.*
-14. [2:08.60] 二〇二四年五月，觀音山入口停了兩台捐血車。  
+14. [2:09.57] 二〇二四年五月，觀音山入口停了兩台捐血車。  
     *In May 2024, two blood buses parked at the Guanyin Mountain entrance.*
-15. [2:15.77] 志工備好冰涼茶水，熱情引導捐血民眾。  
+15. [2:16.13] 志工備好冰涼茶水，熱情引導捐血民眾。  
     *Volunteers served cool tea and warmly guided the donors.*
-16. [2:22.60] 一天下來，募得三百七十二袋熱血。  
+16. [2:22.33] 一天下來，募得三百七十二袋熱血。  
     *By day's end, 372 bags of precious blood had been collected.*
-17. [2:28.73] 李國忠理事長說，這是會友凝聚力與愛心的成果。  
+17. [2:27.73] 李國忠理事長說，這是會友凝聚力與愛心的成果。  
     *Chairman Li Kuo-chung called it the fruit of members' unity and love.*
 
-### 風雨中的志工（2:39.03，21.9 秒）
-18. [2:43.53] 堅山也是登記在案的志工團隊，服務不分晴雨。  
+### 風雨中的志工（2:37.67，22.9 秒）
+18. [2:42.17] 堅山也是登記在案的志工團隊，服務不分晴雨。  
     *Jianshan is also a registered volunteer team, serving rain or shine.*
-19. [2:50.93] 風雨中，志工撐起傘，把關懷送進巷弄。  
+19. [2:50.43] 風雨中，志工撐起傘，把關懷送進巷弄。  
     *Through wind and rain, volunteers carry care into the alleys.*
 
-### 最近動態（3:00.93，20.0 秒）
-20. [3:04.93] 二〇二五年，獎助學金公文再次寄往各校。  
+### 最近動態（3:00.60，19.6 秒）
+20. [3:04.60] 二〇二五年，獎助學金公文再次寄往各校。  
     *In 2025, scholarship notices were once again sent to schools.*
-21. [3:11.73] 讓更多孩子知道，有人在背後支持著他們。  
+21. [3:11.27] 讓更多孩子知道，有人在背後支持著他們。  
     *So more children know that someone is standing behind them.*
 
-### 感人收尾（3:20.90，30.3 秒）
-22. [3:25.40] 也許有一天，受助的孩子，也會成為助人的人。  
+### 感人收尾（3:20.17，29.2 秒）
+22. [3:24.67] 也許有一天，受助的孩子，也會成為助人的人。  
     *Perhaps one day, the children who were helped will help others.*
-23. [3:32.73] 善的循環，就從仁武這片土地，慢慢擴散。  
+23. [3:31.20] 善的循環，就從仁武這片土地，慢慢擴散。  
     *A circle of kindness, spreading slowly from the land of Renwu.*
-24. [3:40.00] 高雄市堅山慈善會，邀您一起，讓愛延續。  
+24. [3:37.90] 高雄市堅山慈善會，邀您一起，讓愛延續。  
     *The Jianshan Charity Association invites you to keep love going.*
 
-### 片尾字卡（3:51.23，14.0 秒）
+### 片尾字卡（3:49.33，14.0 秒）
 
 ## 查證事實與出處
 

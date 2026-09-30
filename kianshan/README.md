@@ -1,6 +1,6 @@
 # 高雄市堅山慈善會簡介：手繪線稿風格動畫
 
-1920×1080、30fps、約 4 分 05 秒。中英雙語字幕燒進畫面，另附 `.srt`。
+1920×1080、30fps、約 4 分 03 秒。中英雙語字幕燒進畫面，另附 `.srt`。
 每一格畫面都用程式產生的 SVG 向量線稿繪製，沒有使用 AI 生成的圖像。
 
 ## 產出檔案
@@ -15,7 +15,7 @@
 ## 製作流程（重建方式）
 
 ```bash
-python3 tts/generate.py 60 0.86   # 1. 生成旁白並量測每句秒數（附 ASR 發音核對）
+python3 tts/generate.py gemini Sulafat  # 1. 生成旁白並量測每句秒數（附 ASR 發音核對）
 python3 tts/timeline.py           # 2. 依秒數排出場景時間軸並輸出 .srt
 python3 render/render.py video 4  # 3. Chromium 逐格渲染 → render/video_noaudio.mp4
 python3 audio/mix.py              # 4. 原創配樂、音效、自動壓低音樂，響度正規化到 -15 LUFS
@@ -26,13 +26,15 @@ python3 qa/check.py               # 5. 逐格檢查、合成成品、抽幀截�
 `numpy scipy pillow soundfile pyloudnorm playwright sherpa-onnx opencc-python-reimplemented jieba`。
 語音模型（Kokoro 多語 v1.1、Paraformer 中文小模型）來自 k2-fsa/sherpa-onnx 的 GitHub releases。
 
-## 改用 VoAI「文彬」的聲音
+## 旁白聲音
 
-製作環境的網路政策擋掉了 VoAI 的 API 主機，所以這版旁白是離線的 Kokoro 中文男聲（speaker 60，語速 0.86）。
-要換成 VoAI 文彬（Neo／穩健）：
+旁白由 Gemini TTS（`gemini-3.8-flash-lite-tts`）生成，聲音是 Sulafat 女聲，並在提示中要求台灣口音、溫暖的說故事語氣。
+Gemini API 金鑰存在雲端環境的 credential 裡，以 `x-goog-api-key` 標頭自動帶上，不會寫進程式碼。
 
-1. 在 VoAI 把 `script/script.json` 的 24 句逐句匯出成 `audio/narration_override/01.wav` 到 `24.wav`。
-2. 從第 1 步開始重跑流程。畫面、字幕、音樂壓低的時間點，都會依新錄音的實際長度重新排定。
+- 為了配合免費額度（每天每個模型 10 次請求），24 句分成 3 大段、一段一次請求，一口氣念完，再依句間停頓自動切成單句。每一句都用語音辨識核對，對不上的句子才單獨重念。
+- 重新生成：`python3 tts/generate.py gemini Sulafat`。可以用環境變數 `GEMINI_TTS_MODEL` 換模型，例如額度重置後改回 `gemini-3.8-flash-tts`。
+- 離線備援：`python3 tts/generate.py kokoro 60 0.86`，使用 Kokoro 中文男聲。
+- 自備錄音：把音檔放到 `audio/narration_override/NN.wav`，會優先使用。
 
 ## 換上正式 Logo
 

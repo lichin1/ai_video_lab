@@ -5,10 +5,10 @@
   "zh": "高雄北邊的仁武，田野與街巷之間，住著一群熱心人。",
   "en": "In Renwu, north Kaohsiung, among fields and lanes, live warm-hearted people.",
   "file": "audio/narration/01.wav",
-  "dur": 6.366,
-  "asr": "高雄北邊的人無田野與街巷之間住住一羣熱心人",
+  "dur": 6.578,
+  "asr": "高雄北邊的人物田野與街巷之間住着一羣熱心人",
   "cer": 0.143,
-  "source": "kokoro sid=60"
+  "source": "gemini gemini-3.8-flash-lite-tts voice=Sulafat (scene take)"
  },
  {
   "n": 2,
@@ -16,10 +16,10 @@
   "zh": "他們相信，一點一滴的善意，能讓家鄉更溫暖。",
   "en": "They believe small acts of kindness can make their hometown warmer.",
   "file": "audio/narration/02.wav",
-  "dur": 5.39,
-  "asr": "他們相信一點一地的善意能讓家鄉更溫暖",
-  "cer": 0.056,
-  "source": "kokoro sid=60"
+  "dur": 5.446,
+  "asr": "他們相信一點一滴的善意能讓家鄉更溫暖",
+  "cer": 0.0,
+  "source": "gemini gemini-3.8-flash-lite-tts voice=Sulafat (scene take)"
  },
  {
   "n": 3,
@@ -27,10 +27,10 @@
   "zh": "這是高雄市堅山慈善會的故事。",
   "en": "This is the story of the Kaohsiung Jianshan Charity Association.",
   "file": "audio/narration/03.wav",
-  "dur": 3.51,
-  "asr": "這是高雄市間山詞善會的故事",
-  "cer": 0.154,
-  "source": "kokoro sid=60"
+  "dur": 3.576,
+  "asr": "這是高雄市尖山慈善會的故事",
+  "cer": 0.077,
+  "source": "gemini gemini-3.8-flash-lite-tts voice=Sulafat (scene take)"
  },
  {
   "n": 4,
@@ -38,10 +38,10 @@
   "zh": "一群鄉親聚在一起，成立了堅山慈善會。",
   "en": "A group of neighbours came together and founded the association.",
   "file": "audio/narration/04.wav",
-  "dur": 4.768,
-  "asr": "圍羣相親聚在一起成立了尖山慈善會",
-  "cer": 0.188,
-  "source": "kokoro sid=60"
+  "dur": 4.679,
+  "asr": "一羣相親聚在一起成立了尖山慈善會",
+  "cer": 0.125,
+  "source": "gemini gemini-3.8-flash-lite-tts voice=Sulafat (scene take)"
  },
  {
   "n": 5,
@@ -49,10 +49,10 @@
   "zh": "會址設在仁武區仁林路，受高雄市社會局輔導。",
   "en": "Based on Renlin Road, Renwu, it works under the city's Social Affairs Bureau.",
   "file": "audio/narration/05.wav",
-  "dur": 5.266,
-  "asr": "會只設在人武區人林路受高雄市這會局輔導",
-  "cer": 0.211,
-  "source": "kokoro sid=60"
+  "dur": 6.005,
+  "asr": "會址設在人武區人林路受高雄市社會局輔導",
+  "cer": 0.105,
+  "source": "gemini gemini-3.8-flash-lite-tts voice=Sulafat (scene take)"
  },
  {
   "n": 6,
@@ -60,10 +60,10 @@
   "zh": "歷任理事長一棒接一棒，把善的火炬傳下去。",
   "en": "Chairperson after chairperson has carried the torch of kindness forward.",
   "file": "audio/narration/06.wav",
-  "dur": 5.084,
-  "asr": "利任理市長一棒接一棒馬上的火炬傳下去",
-  "cer": 0.222,
-  "source": "kokoro sid=60"
+  "dur": 4.982,
+  "asr": "歷任理事長一棒接一棒把扇的火炬傳下去",
+  "cer": 0.056,
+  "source": "gemini gemini-3.8-flash-lite-tts voice=Sulafat (scene take)"
  },
  {
   "n": 7,
@@ -71,10 +71,10 @@
   "zh": "陳國泰理事長與夫人吳惠豐女士，以身作則。",
   "en": "Chairman Chen Kuo-tai and his wife, Ms. Wu Hui-feng, led by example.",
   "file": "audio/narration/07.wav",
-  "dur": 4.808,
-  "asr": "陳國泰理市長與夫人吳慧峯女士一身作則",
-  "cer": 0.222,
-  "source": "kokoro sid=60"
+  "dur": 5.106,
+  "asr": "陳國泰理事長與夫人吳慧峯女士以身作則",
+  "cer": 0.111,
+  "source": "gemini gemini-3.8-flash-lite-tts voice=Sulafat (scene take)"
  },
  {
   "n": 8,
@@ -82,10 +82,10 @@
   "zh": "他們走進社區，把關懷送到需要的人身邊。",
   "en": "They walked into the community, bringing care to those in need.",
   "file": "audio/narration/08.wav",
-  "dur": 4.656,
+  "dur": 4.379,
   "asr": "他們走進社區把關懷送到需要的人身邊",
   "cer": 0.0,
-  "source": "kokoro sid=60"
+  "source": "gemini gemini-3.8-flash-lite-tts voice=Sulafat (scene take)"
  },
  {
   "n": 9,
@@ -93,10 +93,10 @@
   "zh": "堅山最重要的工作之一，是清寒優秀學生獎助學金。",
   "en": "One of its key works is a scholarship for bright students in need.",
   "file": "audio/narration/09.wav",
-  "dur": 5.898,
-  "asr": "尖山最重要的工作之一是清寒優秀學徵獎助學金",
-  "cer": 0.095,
-  "source": "kokoro sid=60"
+  "dur": 6.019,
+  "asr": "尖山最重要的工作之一是清寒優秀學生獎助學金",
+  "cer": 0.048,
+  "source": "gemini gemini-3.8-flash-lite-tts voice=Sulafat (scene take)"
  },
  {
   "n": 10,
@@ -104,10 +104,10 @@
   "zh": "仁武、大樹、鳥松、大社等地區的孩子都受惠。",
   "en": "Children from Renwu, Dashu, Niaosong, Dashe and nearby benefit.",
   "file": "audio/narration/10.wav",
-  "dur": 4.982,
-  "asr": "人物大樹鳥松大舍等地區的孩子都受賄",
+  "dur": 5.831,
+  "asr": "人舞大樹鳥松大舍等地區的孩子都受賄",
   "cer": 0.235,
-  "source": "kokoro sid=60"
+  "source": "gemini gemini-3.8-flash-lite-tts voice=Sulafat (scene take)"
  },
  {
   "n": 11,
@@ -115,10 +115,10 @@
   "zh": "也鼓勵高雄的大學生，學業與品德兼優。",
   "en": "It also encourages Kaohsiung university students to excel in study and character.",
   "file": "audio/narration/11.wav",
-  "dur": 4.448,
+  "dur": 4.481,
   "asr": "也鼓勵高雄的大學生學業與品德兼優",
   "cer": 0.0,
-  "source": "kokoro sid=60"
+  "source": "gemini gemini-3.8-flash-lite-tts voice=Sulafat (scene take)"
  },
  {
   "n": 12,
@@ -126,10 +126,10 @@
   "zh": "一份獎學金，讓努力的孩子能安心讀書。",
   "en": "One scholarship lets a hard-working child study without worry.",
   "file": "audio/narration/12.wav",
-  "dur": 4.529,
+  "dur": 3.939,
   "asr": "一份獎學金讓努力的孩子能安心讀書",
   "cer": 0.0,
-  "source": "kokoro sid=60"
+  "source": "gemini gemini-3.8-flash-lite-tts voice=Sulafat (scene take)"
  },
  {
   "n": 13,
@@ -137,10 +137,10 @@
   "zh": "每年，堅山至少舉辦一次捐血活動。",
   "en": "Every year, Jianshan holds at least one blood drive.",
   "file": "audio/narration/13.wav",
-  "dur": 3.893,
-  "asr": "每年尖山至少舉辦一次捐血活動",
-  "cer": 0.071,
-  "source": "kokoro sid=60"
+  "dur": 3.649,
+  "asr": "每年尖山至少舉辦一次捐寫活動",
+  "cer": 0.143,
+  "source": "gemini gemini-3.8-flash-lite-tts voice=Sulafat (scene take)"
  },
  {
   "n": 14,
@@ -148,10 +148,10 @@
   "zh": "二〇二四年五月，觀音山入口停了兩台捐血車。",
   "en": "In May 2024, two blood buses parked at the Guanyin Mountain entrance.",
   "file": "audio/narration/14.wav",
-  "dur": 5.183,
+  "dur": 4.554,
   "asr": "二零二四年五月觀音山入口停了兩臺捐雪車",
   "cer": 0.053,
-  "source": "kokoro sid=60"
+  "source": "gemini gemini-3.8-flash-lite-tts voice=Sulafat (scene take)"
  },
  {
   "n": 15,
@@ -159,10 +159,10 @@
   "zh": "志工備好冰涼茶水，熱情引導捐血民眾。",
   "en": "Volunteers served cool tea and warmly guided the donors.",
   "file": "audio/narration/15.wav",
-  "dur": 4.845,
-  "asr": "智工備好冰涼茶水熱情引導捐血民衆",
-  "cer": 0.062,
-  "source": "kokoro sid=60"
+  "dur": 4.195,
+  "asr": "智貢備好冰涼茶水熱情引導捐顯民衆",
+  "cer": 0.188,
+  "source": "gemini gemini-3.8-flash-lite-tts voice=Sulafat (scene take)"
  },
  {
   "n": 16,
@@ -170,10 +170,10 @@
   "zh": "一天下來，募得三百七十二袋熱血。",
   "en": "By day's end, 372 bags of precious blood had been collected.",
   "file": "audio/narration/16.wav",
-  "dur": 4.139,
-  "asr": "一天下來目的三百七十二代熱血",
-  "cer": 0.214,
-  "source": "kokoro sid=60"
+  "dur": 3.408,
+  "asr": "一天下來木得三百七十二袋熱血",
+  "cer": 0.071,
+  "source": "gemini gemini-3.8-flash-lite-tts voice=Sulafat (scene take)"
  },
  {
   "n": 17,
@@ -181,10 +181,10 @@
   "zh": "李國忠理事長說，這是會友凝聚力與愛心的成果。",
   "en": "Chairman Li Kuo-chung called it the fruit of members' unity and love.",
   "file": "audio/narration/17.wav",
-  "dur": 5.308,
-  "asr": "李國中理事長說這是會有凝聚力於愛心的成果",
-  "cer": 0.15,
-  "source": "kokoro sid=60"
+  "dur": 4.917,
+  "asr": "李國忠理事長說這是會有凝聚力與愛心的成果",
+  "cer": 0.05,
+  "source": "gemini gemini-3.8-flash-lite-tts voice=Sulafat (scene take)"
  },
  {
   "n": 18,
@@ -192,10 +192,10 @@
   "zh": "堅山也是登記在案的志工團隊，服務不分晴雨。",
   "en": "Jianshan is also a registered volunteer team, serving rain or shine.",
   "file": "audio/narration/18.wav",
-  "dur": 5.386,
-  "asr": "尖山也是登記在岸的職工團隊服務不分情魚",
-  "cer": 0.263,
-  "source": "kokoro sid=60"
+  "dur": 6.275,
+  "asr": "尖山也是登記在岸的職工團隊服務不分晴雨",
+  "cer": 0.158,
+  "source": "gemini gemini-3.8-flash-lite-tts voice=Sulafat (scene take)"
  },
  {
   "n": 19,
@@ -203,10 +203,10 @@
   "zh": "風雨中，志工撐起傘，把關懷送進巷弄。",
   "en": "Through wind and rain, volunteers carry care into the alleys.",
   "file": "audio/narration/19.wav",
-  "dur": 5.0,
-  "asr": "風雨中致公稱其散把關懷送進向弄",
-  "cer": 0.4,
-  "source": "kokoro sid=60"
+  "dur": 5.167,
+  "asr": "風雨中智公撐起傘把關懷送進向弄",
+  "cer": 0.2,
+  "source": "gemini gemini-3.8-flash-lite-tts voice=Sulafat (scene take)"
  },
  {
   "n": 20,
@@ -214,10 +214,10 @@
   "zh": "二〇二五年，獎助學金公文再次寄往各校。",
   "en": "In 2025, scholarship notices were once again sent to schools.",
   "file": "audio/narration/20.wav",
-  "dur": 4.785,
-  "asr": "二零二五年將助學經公文再次寄往各校",
-  "cer": 0.118,
-  "source": "kokoro sid=60"
+  "dur": 4.664,
+  "asr": "二零二五年講助學金公文再次寄往各校",
+  "cer": 0.059,
+  "source": "gemini gemini-3.8-flash-lite-tts voice=Sulafat (scene take)"
  },
  {
   "n": 21,
@@ -225,10 +225,10 @@
   "zh": "讓更多孩子知道，有人在背後支持著他們。",
   "en": "So more children know that someone is standing behind them.",
   "file": "audio/narration/21.wav",
-  "dur": 4.652,
-  "asr": "讓更多孩子知道有人在背後支持住他們",
+  "dur": 4.39,
+  "asr": "讓更多孩子知道有人在背後支持着他們",
   "cer": 0.059,
-  "source": "kokoro sid=60"
+  "source": "gemini gemini-3.8-flash-lite-tts voice=Sulafat (scene take)"
  },
  {
   "n": 22,
@@ -236,10 +236,10 @@
   "zh": "也許有一天，受助的孩子，也會成為助人的人。",
   "en": "Perhaps one day, the children who were helped will help others.",
   "file": "audio/narration/22.wav",
-  "dur": 5.346,
-  "asr": "也許有一天受助的孩子也會成爲助人的人",
-  "cer": 0.0,
-  "source": "kokoro sid=60"
+  "dur": 4.53,
+  "asr": "也許有一天受住的孩子也會成爲助人的人",
+  "cer": 0.056,
+  "source": "gemini gemini-3.8-flash-lite-tts voice=Sulafat (scene take)"
  },
  {
   "n": 23,
@@ -247,10 +247,10 @@
   "zh": "善的循環，就從仁武這片土地，慢慢擴散。",
   "en": "A circle of kindness, spreading slowly from the land of Renwu.",
   "file": "audio/narration/23.wav",
-  "dur": 5.257,
-  "asr": "善的循環就從人五這片土地慢慢擴散一",
-  "cer": 0.188,
-  "source": "kokoro sid=60"
+  "dur": 4.705,
+  "asr": "善的循環就從人武這片土地慢慢擴散",
+  "cer": 0.062,
+  "source": "gemini gemini-3.8-flash-lite-tts voice=Sulafat (scene take)"
  },
  {
   "n": 24,
@@ -258,9 +258,9 @@
   "zh": "高雄市堅山慈善會，邀您一起，讓愛延續。",
   "en": "The Jianshan Charity Association invites you to keep love going.",
   "file": "audio/narration/24.wav",
-  "dur": 4.724,
-  "asr": "高雄市間山慈善會邀您一起讓愛延續喲",
+  "dur": 4.941,
+  "asr": "高雄是尖山慈善會邀您一起讓愛延續",
   "cer": 0.125,
-  "source": "kokoro sid=60"
+  "source": "gemini gemini-3.8-flash-lite-tts voice=Sulafat (scene take)"
  }
 ]
