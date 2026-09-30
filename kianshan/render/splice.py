@@ -18,16 +18,25 @@ def main():
     if not patches:
         print("no patches")
         return
-    inputs = ["-i", BASE]
-    parts, fc, cur = [], [], 0
-    for k, (a, b, p) in enumerate(patches, 1):
-        inputs += ["-i", p]
-        fc.append(f"[0:v]trim=start_frame={cur}:end_frame={a},setpts=PTS-STARTPTS[b{k}]")
-        fc.append(f"[{k}:v]setpts=PTS-STARTPTS[p{k}]")
-        parts += [f"[b{k}]", f"[p{k}]"]
+    # each base segment gets its own input so ffmpeg never buffers a split stream
+    inputs, parts, fc, cur, k = [], [], [], 0, 0
+
+    def seg(a, b=None):
+        nonlocal k
+        inputs.extend(["-i", BASE])
+        end = f":end_frame={b}" if b is not None else ""
+        fc.append(f"[{k}:v]trim=start_frame={a}{end},setpts=PTS-STARTPTS[s{k}]")
+        parts.append(f"[s{k}]")
+        k += 1
+
+    for a, b, p in patches:
+        seg(cur, a)
+        inputs.extend(["-i", p])
+        fc.append(f"[{k}:v]setpts=PTS-STARTPTS[s{k}]")
+        parts.append(f"[s{k}]")
+        k += 1
         cur = b
-    fc.append(f"[0:v]trim=start_frame={cur},setpts=PTS-STARTPTS[tail]")
-    parts.append("[tail]")
+    seg(cur)
     fc.append("".join(parts) + f"concat=n={len(parts)}:v=1:a=0[out]")
     tmp = f"{ROOT}/render/video_spliced.mp4"
     subprocess.check_call(["ffmpeg", "-y", "-loglevel", "error", *inputs, "-filter_complex", ";".join(fc), "-map", "[out]",

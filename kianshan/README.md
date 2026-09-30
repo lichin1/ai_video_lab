@@ -7,7 +7,8 @@
 
 | 檔案 | 內容 |
 |---|---|
-| `output/kianshan_intro.mp4` | 成品影片（H.264 + AAC，響度 -15 LUFS） |
+| `output/kianshan_intro_web.mp4` | 成品影片，交付版（94 MB，H.264 + AAC，響度 -15 LUFS） |
+| `output/kianshan_intro.mp4` | 高畫質母帶（193 MB，超過 GitHub 單檔上限，不放進 repo，執行 `qa/check.py` 會重新產生） |
 | `output/kianshan_intro.srt` | 中英雙語字幕檔 |
 | `output/script_and_sources.md` | 旁白稿與資料來源 |
 | `qa/` | 逐格檢查報告、各場景截圖 |
