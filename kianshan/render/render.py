@@ -127,7 +127,21 @@ if __name__ == "__main__":
     if not os.path.exists(paper):
         make_paper(paper)
     mode = sys.argv[1]
-    if mode == "stills":
+    if mode == "range":   # re-render frames [a, b) into render/patch_<a>_<b>.mp4
+        tl = json.load(open(f"{ROOT}/render/timeline.json"))
+        a, b = int(sys.argv[2]), int(sys.argv[3])
+        n = int(sys.argv[4]) if len(sys.argv) > 4 else 4
+        edges = [a + round(i * (b - a) / n) for i in range(n + 1)]
+        os.makedirs(f"{ROOT}/render/chunks", exist_ok=True)
+
+        async def go():
+            logos = load_logos()
+            return await asyncio.gather(*[worker(100 + a // 10 + i, edges[i], edges[i + 1], tl, logos, print) for i in range(n)])
+        parts = asyncio.run(go())
+        lst = f"{ROOT}/render/chunks/patch_{a}.txt"
+        open(lst, "w").write("".join(f"file '{c}'\n" for c in parts))
+        subprocess.check_call(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", lst, "-c", "copy", f"{ROOT}/render/patch_{a}_{b}.mp4"])
+    elif mode == "stills":
         asyncio.run(stills([int(x) for x in sys.argv[2:]], f"{ROOT}/qa/stills"))
     else:
         asyncio.run(video(int(sys.argv[2]) if len(sys.argv) > 2 else 4))

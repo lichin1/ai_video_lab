@@ -104,7 +104,7 @@ SCENES.s03_founding = (L, D) => {
   s += hearts(960, 640, arrive + 1.4, 6, 700);
   s += signpost(170, 1040, 0.95, prog(L[1].s, 1.2), '仁林路');
   s += txt(170, 1070, 'Renlin Rd., Renwu', prog(L[1].s + 0.8, 1), { size: 18, italic: true, latin: true, font: "'Noto Serif', serif", weight: 400, width: 170 });
-  let h = agencyBadge(1560, 110, 0.85, prog(L[1].s + 0.8, 1.6), 'social', '高雄市政府社會局', 'Social Affairs Bureau, Kaohsiung City Government');
+  let h = agencyBadge(1560, 110, 0.85, prog(L[1].s + 0.8, 1.6), 'social', '高雄市政府社會局', 'Social Affairs Bureau, Kaohsiung City');
   h += stamp(1770, 215, 0.62, prog(L[1].s + 2.4, 0.5), '輔導');
   return { svg: s, hud: h, cam: camPath([[0, 960, 540, 1.0], [L[0].s + 3, 960, 580, 1.06], [D, 980, 560, 1.1]]) };
 };
@@ -239,9 +239,9 @@ SCENES.s06_blood = (L, D) => {
   for (let i = 0; i < 6; i++) h += bloodBag(680 + i * 112, 330, 0.85, eout(prog(L[3].s + 0.3 + i * 0.25, 0.5)), clamp(cnt / 372 * 6 - i));
   // Chairman Li speaks
   s += person(1500, 1100, 1.3, eout(prog(L[4].s - 0.4, 0.8)), { shirt: '#d7c3a6', hair: 'short', vest: true, glasses: true, face: 1, arms: [0.2, -0.8 - 0.3 * Math.sin(t * 2.4)] });
-  s += nameTag(1500, 1170, prog(L[4].s + 0.2, 0.7), '李國忠 理事長', 'Chairman Li Kuo-chung');
+  s += nameTag(1330, 860, prog(L[4].s + 0.2, 0.7), '李國忠 理事長', 'Chairman Li Kuo-chung');
   s += speech(1700, 800, 1.1, prog(L[4].s + 0.6, 0.6), heart(0, -64, 1.3, 1) + heart(-38, -72, 0.8, 1, C.pink) + heart(38, -72, 0.8, 1, C.pink));
-  h += agencyBadge(1580, 110, 0.8, prog(L[2].s + 1.2, 1.6), 'blood', '台灣血液基金會 高雄捐血中心', 'Kaohsiung Blood Center, Taiwan Blood Services Foundation');
+  h += agencyBadge(1580, 110, 0.8, prog(L[2].s + 1.2, 1.6), 'blood', '台灣血液基金會 高雄捐血中心', 'Taiwan Blood Services Foundation, Kaohsiung');
   const cam = camPath([[0, 900, 540, 1.0], [L[1].s, 1000, 560, 1.02], [L[2].s - 0.5, 1250, 560, 1.02], [L[2].s + 1.4, 1750, 590, 1.08], [L[3].s - 0.4, 1450, 560, 1.0], [L[4].s - 0.4, 1520, 600, 1.05], [D, 1560, 680, 1.16]]);
   return { svg: s, hud: h, cam };
 };
@@ -267,7 +267,7 @@ SCENES.s07_rain = (L, D) => {
   s += walker(va + 0.4, vb - va - 0.4, -260, 1340, 1020, 1.08, { shirt: '#e8c2b0', hair: 'long', vest: true, arms: [0.2, 0.9], hold: `<g transform="translate(-44 -24)">${umbrella('#6f95b8')}</g>` + riceBag(62, -70, 0.8, 1) });
   s += person(1640, 1000, 1.05, eout(prog(L[1].s + 2.2, 0.8)), { shirt: '#d9cfc2', hair: 'gray', face: -1, arms: t > L[1].s + 2.8 ? [-0.4, -1.6] : undefined });
   s += hearts(1540, 780, L[1].s + 3, 5, 220);
-  const h = agencyBadge(1560, 110, 0.8, prog(L[0].s + 0.8, 1.6), 'volunteer', '高雄市志願服務資源中心', 'Registered volunteer team · Kaohsiung Volunteer Center');
+  const h = agencyBadge(1560, 110, 0.8, prog(L[0].s + 0.8, 1.6), 'volunteer', '高雄市志願服務資源中心', 'Kaohsiung Volunteer Service Center');
   const cam = camPath([[0, 900, 540, 1.0], [L[1].s, 1100, 560, 1.06], [D, 1400, 620, 1.14]]);
   return { svg: s, hud: h, cam };
 };
