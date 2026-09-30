@@ -1,0 +1,8 @@
+kianshan/render/chunks/
+kianshan/render/video_noaudio.mp4
+kianshan/audio/mix_raw.wav
+kianshan/audio/mix_final.wav
+kianshan/audio/stems/
+kianshan/qa/stills/
+kianshan/qa/sheet_*.png
+__pycache__/
