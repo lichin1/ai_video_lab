@@ -1,0 +1,40 @@
+# 「一天一AI」文章分類框架：每篇文章會標三個維度 + 一個落地產出
+# 抓到原文後，由分類步驟逐篇判讀並寫入 catalog.json
+
+capability:   # 職場人日常能力（藍圖的列）
+  research:      {name: 資訊蒐集與研究, examples: [搜尋查證, 競品研究, 讀報告, 每日閱讀]}
+  writing:       {name: 寫作與溝通, examples: [Email, 公文, 社群貼文, 改寫潤稿]}
+  meeting:       {name: 會議與協作, examples: [會議記錄, 待辦追蹤, 跨部門同步]}
+  analysis:      {name: 數據分析與決策, examples: [Excel, 報表, 試算, 圖表]}
+  presentation:  {name: 簡報與視覺, examples: [簡報, 圖卡, 影片, 設計]}
+  planning:      {name: 規劃與時間管理, examples: [行程, 專案拆解, 週報, 目標管理]}
+  automation:    {name: 自動化與代理, examples: [AI Agent, 排程, 串接工具, 一人公司]}
+  learning:      {name: 學習與成長, examples: [學新技能, 語言學習, 職涯規劃]}
+  knowledge:     {name: 知識管理, examples: [筆記, 個人知識庫, 文件整理]}
+
+problem_type:  # 文章要解決的問題型態
+  - 省時（重複性工作）
+  - 提質（產出品質不穩）
+  - 入門（不會用某工具）
+  - 決策（資訊太多難判斷）
+  - 創意（沒靈感/從零開始）
+  - 系統化（每次都從頭教 AI）
+
+article_type:  # 內容類型
+  - 工具教學
+  - 提示詞範本
+  - 工作流拆解
+  - 案例實測
+  - 趨勢與調查
+
+workflow_pattern:  # AI 工作流型態
+  single_prompt:  一次性提示詞（複製即用）
+  prompt_chain:   多步驟提示鏈（輸入→加工→輸出）
+  custom_assistant: 自訂助理（GPTs / Claude Project / Gem，存好角色與規則）
+  agent:          代理/自動化（排程、串接、多工具）
+  multimodal:     多模態（圖、音、影）
+
+deliverable:   # 每篇對應的落地產出
+  skill:     可安裝的 Claude Skill（SKILL.md）
+  prompt:    提示詞卡（ChatGPT / Gemini / Claude 通用）
+  checklist: 流程檢核表（無需安裝）
