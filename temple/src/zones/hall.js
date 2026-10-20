@@ -70,7 +70,7 @@ export default function build() {
   });
 
   // ── 露座佛像 ──
-  const bronzeTri = triplanar(mat.bronze, 1.4); bronzeTri.color = new THREE.Color(0xa3ae9c);
+  const bronzeTri = triplanar(mat.bronze, 1.4); bronzeTri.color = new THREE.Color(0xb4bcaa); bronzeTri.metalness = 0.6;
   const bronzeTriDS = bronzeTri.clone(); bronzeTriDS.onBeforeCompile = bronzeTri.onBeforeCompile; bronzeTriDS.customProgramCacheKey = bronzeTri.customProgramCacheKey; bronzeTriDS.side = THREE.DoubleSide;
   const { group: bud } = buildBuddha({ bronze: bronzeTri, bronzeDS: bronzeTriDS, gold: mat.gold, stone: mat.stone });
   bud.position.set(...buddha.pos);

@@ -180,6 +180,7 @@ function computeExposure(leaves, { cell = 0.35, k = 0.55, floor = 0.1 } = {}) {
 }
 
 function leafMesh(geo, material, leaves, { castShadow = true, receiveShadow = false } = {}) {
+  castShadow = false;
   const mesh = new THREE.InstancedMesh(geo, material, leaves.length);
   const m = new THREE.Matrix4();
   const ex = new Float32Array(leaves.length);
