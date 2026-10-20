@@ -38,6 +38,7 @@ export async function openScene(query = {}) {
   });
   const w = +query.w || 1920, h = +query.h || 1080;
   const page = await browser.newPage({ viewport: { width: w, height: h }, deviceScaleFactor: 1 });
+  page.setDefaultTimeout(0);
   const errors = [];
   page.on('pageerror', (e) => errors.push(String(e)));
   page.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') errors.push(`[${m.type()}] ${m.text()}`); });
@@ -50,7 +51,7 @@ export async function openScene(query = {}) {
     page, errors,
     async frame(t, cam) {
       const info = await page.evaluate(([t, cam]) => window.renderAt(t, cam), [t, cam || null]);
-      const png = await page.locator('canvas').screenshot({ type: 'png' });
+      const png = await page.locator('canvas').screenshot({ type: 'png', timeout: 0 });
       return { png, info };
     },
     async close() { await browser.close(); server.close(); },

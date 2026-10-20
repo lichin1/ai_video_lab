@@ -31,6 +31,7 @@ renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.0;
 renderer.shadowMap.enabled = true;
+renderer.info.autoReset = false; // composer 有多個 pass，改成每格手動歸零才能看到整格的 draw call
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 document.body.appendChild(renderer.domElement);
 
@@ -118,6 +119,7 @@ window.renderAt = async (t, cam) => {
   camera.near = Math.max(0.02, Math.min(0.5, (c.near ?? 0.05)));
   camera.updateProjectionMatrix();
   camera.lookAt(...c.look);
+  renderer.info.reset();
   sky.material.uniforms.uTime.value = t;
   for (const z of zones) z.update?.(t, camera);
   if (composer) {

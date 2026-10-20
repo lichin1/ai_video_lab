@@ -1,5 +1,13 @@
 // 境內點綴：修剪灌木（刈込み，杜鵑 / 紅葉的灯台躑躅）與草叢。避開參道、禁區、池、石燈籠、樹幹與圍牆。
 import * as THREE from 'three';
+import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
+
+/** 共用頂點的二十面體球（位移後法線才會平滑） */
+function smoothIco(detail) {
+  const g = new THREE.IcosahedronGeometry(1, detail);
+  g.deleteAttribute('normal'); g.deleteAttribute('uv');
+  return mergeVertices(g);
+}
 import { trees, toro, terrain, pond, inPond } from '../../layout.js';
 import { heightAt, pathDistance } from '../../ground.js';
 import { makeRng, makeNoise2D, fbm } from '../../rng.js';
@@ -39,8 +47,8 @@ function leafyTexture() {
   const S = 256, c = document.createElement('canvas'); c.width = c.height = S;
   const g = c.getContext('2d');
   const rng = makeRng('shrub-leafy');
-  g.fillStyle = '#5a5a5a'; g.fillRect(0, 0, S, S);
-  for (let i = 0; i < 2600; i++) {
+  g.fillStyle = '#3a3a3a'; g.fillRect(0, 0, S, S);
+  for (let i = 0; i < 3800; i++) {
     const x = rng() * S, y = rng() * S, r = rng.range(2, 5), k = Math.round(rng.range(60, 255));
     g.fillStyle = `rgb(${k},${k},${k})`;
     g.beginPath(); g.ellipse(x, y, r, r * 0.6, rng() * 3.14, 0, Math.PI * 2); g.fill();
@@ -58,7 +66,7 @@ export function buildGroundCover(group) {
   const noise = makeNoise2D('ground-cover');
 
   // ── 灌木 ──
-  const shrubGeo = new THREE.IcosahedronGeometry(1, 2);
+  const shrubGeo = smoothIco(2);
   {
     const p = shrubGeo.attributes.position, n = makeNoise2D('shrub-shape');
     const uv = new Float32Array(p.count * 2);
@@ -72,7 +80,8 @@ export function buildGroundCover(group) {
     shrubGeo.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
     shrubGeo.computeVertexNormals();
   }
-  const shrubMat = new THREE.MeshStandardMaterial({ name: 'shrub', map: leafyTexture(), roughness: 0.9 });
+  const leafy = leafyTexture();
+  const shrubMat = new THREE.MeshStandardMaterial({ name: 'shrub', map: leafy, bumpMap: leafy, bumpScale: 4, roughness: 0.9 });
   const shrubs = [];
   const greens = ['#34522a', '#3a5a2e', '#2e4826', '#466432'].map((h) => new THREE.Color(h));
   const autumn = ['#8a2216', '#a03a14', '#7a2a18', '#9a5a18'].map((h) => new THREE.Color(h));
@@ -105,7 +114,7 @@ export function buildGroundCover(group) {
   const pos = [], col = [], nrm = [];
   const BL = 7;
   const br = makeRng('grass-blade');
-  const cBase = new THREE.Color('#26341a'), cTip = new THREE.Color('#9a8c4c'), cMid = new THREE.Color('#4f5f2a');
+  const cBase = new THREE.Color('#34441e'), cTip = new THREE.Color('#c0a860'), cMid = new THREE.Color('#6a7a34');
   for (let b = 0; b < BL; b++) {
     const a = (b / BL) * Math.PI * 2 + br.range(-0.3, 0.3);
     const lean = br.range(0.25, 0.6), h = br.range(0.6, 1), w = br.range(0.035, 0.06);
@@ -127,13 +136,13 @@ export function buildGroundCover(group) {
   for (let tries = 0; tufts.length < 4200 && tries < 80000; tries++) {
     const x = rng.range(P.xMin, P.xMax), z = rng.range(P.zMin, P.zMax);
     const rim = pondRimDist(x, z);
-    let pref = 0.12 + 0.5 * Math.max(0, noise(x / 9 + 40, z / 9));
+    let pref = 0.45 * Math.max(0, noise(x / 9 + 40, z / 9) - 0.35);
     if (rim > 0 && rim < 4) pref += 0.8;
     for (const t of trunks) if (Math.hypot(x - t[0], z - t[2]) < 3) pref += 0.5;
     if (keepOutDist(x, z) < 2.5) pref += 0.35;
     if (rng() > pref) continue;
     if (!clear(x, z, 0.1)) continue;
-    tufts.push({ x, z, s: rng.range(0.22, 0.5), rot: rng() * 6, c: new THREE.Color(1, 1, 1).multiplyScalar(rng.range(0.7, 1.15)).lerp(new THREE.Color(1.1, 0.95, 0.7), rng() * 0.5) });
+    tufts.push({ x, z, s: rng.range(0.3, 0.6), rot: rng() * 6, c: new THREE.Color(1, 1, 1).multiplyScalar(rng.range(0.7, 1.15)).lerp(new THREE.Color(1.1, 0.95, 0.7), rng() * 0.5) });
   }
   {
     const mesh = new THREE.InstancedMesh(grassGeo, grassMat, tufts.length);

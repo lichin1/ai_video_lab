@@ -17,6 +17,7 @@ const SEAT = buddha.pedestalHeight;
 const HR = { x: 0.305, y: 0.4, z: 0.335 };
 const FACE_OFF = [0, -0.12, 0.33];   // 臉中心（佛臉焦點）相對頭心
 const TILT = 0.12;                    // 俯首
+const HS = 1.15;                      // 佛頭整體縮放（臉部雕刻以 1.0 尺度設計）
 
 /** 臉部前凸量（公尺），x 橫向、fy = 相對臉中心的高度。 */
 function faceRelief(x, fy) {
@@ -81,7 +82,7 @@ function headPoint(X, Y, Z) {
   // 下頦收窄
   if (Y < 0) { const j = Math.pow(sstep(0, 1, -Y), 1.4); x *= 1 - 0.1 * j; z *= 1 - 0.06 * j * (Z > 0 ? 1 : 0.3); }
   // 肉髻（頂部隆起）
-  y += 0.085 * sstep(0.7, 0.96, Y);
+  y += 0.065 * sstep(0.7, 0.96, Y);
   x *= 1 - 0.05 * sstep(0.6, 0.95, Y);
   // 臉部雕刻
   const wF = sstep(0.32, 0.72, Z);
@@ -173,45 +174,45 @@ function smin(a, b, k) { const h = Math.max(k - Math.abs(a - b), 0) / k; return 
 function makeBodySDF(headC) {
   const S = SEAT;
   const y = (v) => S + v; // 由座面起算
-  const neckA = [0, y(2.78), 0.3], neckB = [headC[0], headC[1] - 0.12, headC[2] - 0.08];
+  const neckA = [0, y(2.9), 0.4], neckB = [headC[0], headC[1] - 0.16, headC[2] - 0.1];
   return (px, py, pz) => {
     const ax = Math.abs(px);
     // 軀幹
-    let d = sdEll(px, py, pz, 0, y(2.25), 0.24, 0.86, 0.78, 0.56);
-    d = smin(d, sdEll(px, py, pz, 0, y(1.35), 0.3, 0.84, 0.82, 0.62), 0.35);
-    d = smin(d, sdEll(ax, py, pz, 0.74, y(2.62), 0.18, 0.4, 0.33, 0.4), 0.3);       // 肩
-    d = smin(d, sdCap(px, py, pz, neckA, neckB, 0.22, 0.2), 0.14);                 // 頸
+    let d = sdEll(px, py, pz, 0, y(2.28), 0.33, 0.8, 0.8, 0.55);
+    d = smin(d, sdEll(px, py, pz, 0, y(1.35), 0.38, 0.78, 0.82, 0.6), 0.35);
+    d = smin(d, sdEll(ax, py, pz, 0.67, y(2.72), 0.3, 0.37, 0.3, 0.37), 0.3);        // 肩
+    d = smin(d, sdCap(px, py, pz, neckA, neckB, 0.23, 0.21), 0.16);                   // 頸
     // 臂：上臂（袖）→ 肘 → 前臂 → 定印
-    const sh = [0.93, y(2.52), 0.14], el = [1.17, y(1.36), 0.36], wr = [0.42, y(0.8), 0.96];
-    d = smin(d, sdCap(ax, py, pz, sh, el, 0.29, 0.25), 0.18);
-    d = smin(d, sdCap(ax, py, pz, el, wr, 0.23, 0.17), 0.14);
-    d = smin(d, sdEll(ax, py, pz, 1.14, y(0.95), 0.62, 0.3, 0.46, 0.42), 0.22);      // 垂袖
-    d = smin(d, sdEll(px, py, pz, 0, y(0.72), 1.0, 0.44, 0.085, 0.25), 0.07);        // 重ねた掌
-    d = smin(d, sdCap(ax, py, pz, [0.13, y(0.76), 1.13], [0.015, y(0.9), 1.11], 0.042, 0.036), 0.04); // 拇指相接
-    d = smin(d, sdCap(ax, py, pz, [0.42, y(0.74), 0.92], [0.34, y(0.73), 1.17], 0.05, 0.045), 0.05);
+    const sh = [0.84, y(2.6), 0.27], el = [1.08, y(1.4), 0.46], wr = [0.4, y(0.82), 1.0];
+    d = smin(d, sdCap(ax, py, pz, sh, el, 0.28, 0.24), 0.18);
+    d = smin(d, sdCap(ax, py, pz, el, wr, 0.22, 0.16), 0.14);
+    d = smin(d, sdEll(ax, py, pz, 1.06, y(0.98), 0.7, 0.29, 0.45, 0.4), 0.22);      // 垂袖
+    d = smin(d, sdEll(px, py, pz, 0, y(0.74), 1.04, 0.42, 0.085, 0.24), 0.07);       // 重ねた掌
+    d = smin(d, sdCap(ax, py, pz, [0.125, y(0.78), 1.17], [0.015, y(0.92), 1.15], 0.042, 0.036), 0.04); // 拇指相接
+    for (const f of [0.05, 0.13, 0.21, 0.29]) d = smin(d, sdCap(ax, py, pz, [f, y(0.77), 0.86], [f + 0.01, y(0.77), 1.24], 0.035, 0.03), 0.03); // 指
     // 結跏趺坐：膝・脛・足
-    d = smin(d, sdEll(px, py, pz, 0, y(0.32), 0.62, 1.72, 0.38, 0.98), 0.3);
-    d = smin(d, sdEll(ax, py, pz, 1.42, y(0.3), 0.98, 0.44, 0.33, 0.47), 0.25);
-    d = smin(d, sdCap(px, py, pz, [-1.36, y(0.36), 1.12], [0.62, y(0.58), 0.98], 0.25, 0.2), 0.2);
-    d = smin(d, sdCap(px, py, pz, [1.36, y(0.32), 1.0], [-0.6, y(0.5), 0.8], 0.25, 0.2), 0.2);
-    d = smin(d, sdEll(px, py, pz, 0.66, y(0.64), 1.0, 0.34, 0.1, 0.19), 0.08);       // 足裏（右足上向き）
-    d = smin(d, sdEll(px, py, pz, -0.68, y(0.58), 0.84, 0.32, 0.1, 0.18), 0.08);
+    d = smin(d, sdEll(px, py, pz, 0, y(0.3), 0.68, 1.6, 0.36, 0.95), 0.3);
+    d = smin(d, sdEll(ax, py, pz, 1.32, y(0.3), 1.0, 0.42, 0.32, 0.46), 0.25);
+    d = smin(d, sdCap(px, py, pz, [-1.26, y(0.38), 1.14], [0.6, y(0.6), 1.04], 0.25, 0.2), 0.16);
+    d = smin(d, sdCap(px, py, pz, [1.26, y(0.32), 1.02], [-0.58, y(0.5), 0.84], 0.25, 0.2), 0.16);
+    d = smin(d, sdEll(px, py, pz, 0.68, y(0.7), 1.06, 0.33, 0.1, 0.18), 0.07);       // 足裏（右足上向き）
+    d = smin(d, sdEll(px, py, pz, -0.66, y(0.6), 0.88, 0.3, 0.1, 0.17), 0.07);
     // 衣文（法衣の襞）
     let fold = 0;
-    if (pz > -0.1 && py > y(0.9) && py < y(2.7)) { // 胸腹：左肩から右脇へ流れる弧
-      const r = Math.hypot(px - 0.95, py - y(2.7));
+    if (pz > -0.05 && py > y(0.9) && py < y(2.85)) { // 胸腹：左肩から右脇へ流れる弧
+      const r = Math.hypot(px - 0.85, py - y(2.8));
       fold += 0.009 * Math.sin(r * 22) * sstep(y(0.9), y(1.3), py) * sstep(0.35, 0.0, Math.abs(px + 0.05 - (py - y(1.0)) * 0.25) - 0.25);
     }
     if (py < y(0.95)) { // 膝前：手を中心に同心の襞
-      const r = Math.hypot(px, (pz - 0.95) * 1.4);
+      const r = Math.hypot(px, (pz - 1.0) * 1.4);
       fold += 0.011 * Math.sin(r * 15) * sstep(0.35, 0.7, r);
     }
-    if (ax > 0.9 && py > y(0.4) && py < y(2.4)) fold += 0.008 * Math.sin((pz * 0.8 + py) * 16) * sstep(0.9, 1.1, ax); // 袖
+    if (ax > 0.85 && py > y(0.4) && py < y(2.5)) fold += 0.008 * Math.sin((pz * 0.8 + py) * 16) * sstep(0.85, 1.05, ax); // 袖
     // 胸の衣縁（右肩から斜めに）
-    const edge = px * 0.55 + (py - y(1.9)) * 0.85 - 0.12;
-    if (pz > 0.1 && py > y(1.0)) fold -= 0.012 * ridge(edge, 0.03);
+    const edge = px * 0.55 + (py - y(1.95)) * 0.85 - 0.12;
+    if (pz > 0.15 && py > y(1.0)) fold -= 0.012 * ridge(edge, 0.03);
     // 三道（頸のしわ）
-    if (py > y(2.7)) for (const yy of [headC[1] - 0.47, headC[1] - 0.53]) fold += 0.005 * ridge(py - yy, 0.008) * sstep(0.3, 0.1, ax);
+    if (py > y(2.8)) for (const yy of [headC[1] - 0.5, headC[1] - 0.57]) fold += 0.005 * ridge(py - yy, 0.009) * sstep(0.3, 0.1, ax);
     d += fold;
     return Math.max(d, S - 0.02 - py);
   };
@@ -295,17 +296,17 @@ function surfaceNets(sdf, [x0, y0, z0], [x1, y1, z1], cell) {
 }
 
 // ═════════════════ 蓮台・石座・光背 ═════════════════
-function petal(L, Wd, cup, bend) {
+function petal(L, Wd, cup, a0, k) {
   return gridSurface(10, 14, (u, v) => {
     const w = u * 2 - 1, s = v;
-    const half = Wd * Math.pow(Math.sin(Math.PI * Math.pow(s, 0.72)), 0.85) * (1 - 0.15 * s);
+    const half = Wd * Math.pow(Math.sin(Math.PI * Math.pow(s, 0.62)), 0.6) * (1 - 0.12 * s);
     const lat = w * half;
-    const outN = -cup * (1 - w * w) * Math.sin(Math.PI * Math.min(1, s * 1.1)) + 0.012 * ridge(w, 0.12) * (1 - s) + 0.008 * ridge(Math.abs(w) - 0.92, 0.08);
-    // 沿長度向外彎
-    const ang = bend * s * s;
-    const along = s * L;
-    const yy = along * Math.cos(ang * 0.5) , nn = along * Math.sin(ang * 0.5) * 0.9;
-    return [lat, yy, nn + outN + bend * 0.04 * s ** 3];
+    const a = a0 + k * s;
+    const n = Math.abs(k) > 1e-4 ? (L * (Math.cos(a0) - Math.cos(a))) / k : L * s * Math.sin(a0);
+    const yy = Math.abs(k) > 1e-4 ? (L * (Math.sin(a) - Math.sin(a0))) / k : L * s * Math.cos(a0);
+    // 斷面外凸（花瓣背面朝外）＋中肋＋縁
+    const bulge = cup * (1 - w * w) * Math.sin(Math.PI * Math.min(1, s * 1.05)) + 0.01 * ridge(w, 0.1) * (1 - s) - 0.006 * ridge(Math.abs(w) - 0.9, 0.08);
+    return [lat, yy + bulge * -Math.sin(a), n + bulge * Math.cos(a)];
   }, { uvf: (u, v) => [u * Wd * 2, v * L] });
 }
 
@@ -328,19 +329,19 @@ function lotusPedestal() {
     [1.75, SEAT - 0.32], [1.86, SEAT - 0.12], [1.98, SEAT - 0.06], [1.98, SEAT], [0, SEAT]].map(([r, y]) => new THREE.Vector2(r, y));
   bronzeParts.push(normalizeGeo(new THREE.LatheGeometry(prof, 64)));
   // 反花（下向きの蓮弁）
-  const down = petal(0.5, 0.2, 0.035, 0.9);
+  const down = petal(0.46, 0.24, 0.04, 2.45, -1.0);
   for (let k = 0; k < 24; k++) {
     const a = ((k + 0.5) * Math.PI * 2) / 24;
-    const m = new THREE.Matrix4().makeRotationY(a).multiply(new THREE.Matrix4().makeTranslation(0, base + 0.42, 1.55)).multiply(new THREE.Matrix4().makeRotationX(Math.PI - 0.95));
+    const m = new THREE.Matrix4().makeRotationY(a).multiply(new THREE.Matrix4().makeTranslation(0, base + 0.42, 1.55));
     const g = normalizeGeo(down.clone()); g.applyMatrix4(m); bronzeParts.push(g);
   }
   // 仰蓮三重
-  const rows = [[base + 0.45, 1.5, 0.98, 22, 0], [base + 0.6, 1.62, 0.78, 22, 0.5], [base + 0.76, 1.74, 0.58, 22, 0]];
+  const rows = [[base + 0.45, 1.5, 1.15, 20, 0], [base + 0.62, 1.6, 0.9, 20, 0.5], [base + 0.8, 1.7, 0.62, 20, 0]];
   for (const [y0, r0, lean, n, off] of rows) {
-    const pg = petal(0.6, 0.27, 0.05, 0.7);
+    const pg = petal(0.62, 0.31, 0.05, lean, -0.85);
     for (let k = 0; k < n; k++) {
       const a = ((k + off) * Math.PI * 2) / n;
-      const m = new THREE.Matrix4().makeRotationY(a).multiply(new THREE.Matrix4().makeTranslation(0, y0, r0)).multiply(new THREE.Matrix4().makeRotationX(lean));
+      const m = new THREE.Matrix4().makeRotationY(a).multiply(new THREE.Matrix4().makeTranslation(0, y0, r0));
       const g = normalizeGeo(pg.clone()); g.applyMatrix4(m); bronzeParts.push(g);
     }
   }
@@ -397,12 +398,12 @@ export function buildBuddha(materials) {
   group.name = 'buddha';
   const F = [0, buddha.faceHeight - buddha.pos[1], buddha.faceForward];
   const rx = new THREE.Matrix4().makeRotationX(TILT);
-  const off = new THREE.Vector3(...FACE_OFF).applyMatrix4(rx);
+  const off = new THREE.Vector3(...FACE_OFF).multiplyScalar(HS).applyMatrix4(rx);
   const headC = [F[0] - off.x, F[1] - off.y, F[2] - off.z];
 
   // 佛身
   const sdf = makeBodySDF(headC);
-  const body = surfaceNets(sdf, [-2.08, SEAT - 0.06, -0.72], [2.08, headC[1] - 0.05, 1.7], 0.027);
+  const body = surfaceNets(sdf, [-1.95, SEAT - 0.06, -0.62], [1.95, headC[1] - 0.1, 1.72], 0.027);
   const bodyMesh = new THREE.Mesh(body, materials.bronze);
   bodyMesh.castShadow = bodyMesh.receiveShadow = true;
   group.add(bodyMesh);
@@ -411,6 +412,7 @@ export function buildBuddha(materials) {
   const head = new THREE.Group();
   head.position.set(...headC);
   head.rotation.x = TILT;
+  head.scale.setScalar(HS);
   group.add(head);
   const hg = headGeometry();
   const ears = mergeGeometries([normalizeGeo(earGeometry(1)), normalizeGeo(earGeometry(-1))]);

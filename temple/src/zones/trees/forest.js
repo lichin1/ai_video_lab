@@ -1,5 +1,13 @@
 // 背景杉林：便宜的多層錐體 InstancedMesh（杉），夾雜少量圓冠闊葉樹（部分轉黃、轉紅）。種在山坡上（heightAt）。
 import * as THREE from 'three';
+import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
+
+/** 共用頂點的二十面體球（位移後法線才會平滑） */
+function smoothIco(detail) {
+  const g = new THREE.IcosahedronGeometry(1, detail);
+  g.deleteAttribute('normal'); g.deleteAttribute('uv');
+  return mergeVertices(g);
+}
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { trees, inPond } from '../../layout.js';
 import { heightAt } from '../../ground.js';
@@ -19,7 +27,7 @@ export function buildForest(group) {
   const trunk = new THREE.CylinderGeometry(0.06, 0.08, 0.12, 5, 1, true).translate(0, -0.02, 0);
   const coneGeo = mergeGeometries([...tiers.map((g) => g.toNonIndexed()), trunk.toNonIndexed()]);
   coneGeo.computeVertexNormals();
-  const blobGeo = new THREE.IcosahedronGeometry(1, 1);
+  const blobGeo = smoothIco(2);
   {
     const p = blobGeo.attributes.position, n = makeNoise2D('forest-blob');
     for (let i = 0; i < p.count; i++) {
@@ -32,8 +40,8 @@ export function buildForest(group) {
   const mat = new THREE.MeshStandardMaterial({ name: 'forest', color: 0xffffff, roughness: 1, flatShading: false });
 
   const cones = [], blobs = [];
-  const sugi = [new THREE.Color('#16302c'), new THREE.Color('#1e3a32'), new THREE.Color('#223a2a'), new THREE.Color('#14282a')];
-  const broad = [new THREE.Color('#2c3a24'), new THREE.Color('#3a3a22'), new THREE.Color('#7a4a1a'), new THREE.Color('#8a3018'), new THREE.Color('#6a5a20')];
+  const sugi = [new THREE.Color('#0e2224'), new THREE.Color('#132a2a'), new THREE.Color('#163024'), new THREE.Color('#10252c')];
+  const broad = [new THREE.Color('#1f2e1e'), new THREE.Color('#2a2e1c'), new THREE.Color('#4e3418'), new THREE.Color('#5a2616'), new THREE.Color('#463e1a')];
   for (const band of trees.forestBands) {
     const rng = makeRng(band.seed);
     const noise = makeNoise2D(band.seed + '-density');
@@ -47,10 +55,10 @@ export function buildForest(group) {
       const y = heightAt(x, z);
       placed++;
       if (rng() < 0.16) {
-        const r = rng.range(3, 5.5);
+        const r = rng.range(2.6, 4.2);
         blobs.push({ x, y: y - 0.4, z, sx: r, sy: r * rng.range(0.7, 0.9), rot: rng() * 6, c: rng.pick(broad).clone().multiplyScalar(rng.range(0.8, 1.1)) });
       } else {
-        const h = rng.range(15, 28);
+        const h = rng.range(12, 22) * (0.8 + 0.4 * rng());
         cones.push({ x, y: y - 0.6, z, sx: h * rng.range(0.15, 0.2), sy: h, rot: rng() * 6, c: rng.pick(sugi).clone().multiplyScalar(rng.range(0.8, 1.15)) });
       }
     }

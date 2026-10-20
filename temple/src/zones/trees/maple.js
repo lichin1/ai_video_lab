@@ -301,7 +301,6 @@ export function buildMaples(group, leafMat) {
     computeExposure(leaves.concat(hero), { floor: isHero ? 0.12 : 0.1 });
     for (const l of hero) l.e = Math.max(l.e, 0.92);
 
-    console.warn('maple', ti, 'tips', tree.tips.length, 'branchTris', tree.bld.idx.length/3, 'leaves', leaves.length);
     const branch = new THREE.Mesh(tree.bld.toGeometry(), bark);
     branch.castShadow = true; branch.receiveShadow = true;
     branch.name = `maple-${ti}-wood`;

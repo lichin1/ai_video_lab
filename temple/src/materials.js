@@ -106,8 +106,8 @@ const bronzeRough = canvasTexture('tex-bronze-r', 256, (g, s, r, n) =>
 // 金箔：箔片接縫的細格與輕微色差
 const goldTex = canvasTexture('tex-gold', 256, (g, s, r, n) =>
   pixelFill(g, s, n, (u, v, N) => {
-    const seam = ((u * 8) % 1 < 0.03 || (v * 8) % 1 < 0.03) ? 0.9 : 1;
-    const k = seam * (1 + N(8, 8, 3) * 0.06);
+    const seam = ((u * 4) % 1 < 0.012 || (v * 4) % 1 < 0.012) ? 0.97 : 1;
+    const k = seam * (1 + N(6, 6, 3) * 0.05);
     return [clamp255(255 * k), clamp255(196 * k), clamp255(92 * k)];
   }));
 
