@@ -7,3 +7,6 @@ kianshan/qa/stills/
 kianshan/qa/sheet_*.png
 __pycache__/
 kianshan/output/kianshan_intro.mp4
+temple/node_modules/
+temple/render/frames/
+temple/render/*.mp4
