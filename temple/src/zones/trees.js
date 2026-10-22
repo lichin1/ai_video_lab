@@ -17,7 +17,9 @@ export default async function build() {
   buildPines(group);
   buildForest(group);
   buildGroundCover(group);
-  if (new URLSearchParams(location.search).has('treeStats')) {
+  const q = new URLSearchParams(location.search);
+  if (q.get('treeHide')) { const re = new RegExp(q.get('treeHide')); group.traverse((o) => { if (o.isMesh && re.test(o.name)) o.visible = false; }); }
+  if (q.has('treeStats')) {
     const out = {};
     group.traverse((o) => {
       if (!o.isMesh) return;

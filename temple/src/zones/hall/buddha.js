@@ -27,7 +27,7 @@ function faceRelief(x, fy) {
   f += 0.008 * G2(ax, fy - 0.17, 0.12, 0.06);
   f -= 0.012 * G2(ax - 0.205, fy - 0.05, 0.035, 0.07);
   // 長眉：弧形眉稜 + 銳利眉線
-  const browY = 0.108 - 0.95 * ax * ax - 0.05 * ax;
+  const browY = 0.106 - 2.1 * ax * ax - 0.03 * ax;
   const bm = sstep(0.215, 0.13, ax) * sstep(0.004, 0.03, ax);
   f += 0.011 * ridge(fy - browY, 0.02) * bm;
   f += 0.0035 * ridge(fy - browY - 0.006, 0.0055) * bm;
@@ -81,7 +81,7 @@ function headPoint(X, Y, Z) {
   }
   let x = HR.x * xs, y = HR.y * Y, z = HR.z * zs * (Z < 0 ? 1.06 : 1);
   // 下頦收窄
-  if (Y < 0) { const j = Math.pow(sstep(0, 1, -Y), 1.4); x *= 1 - 0.1 * j; z *= 1 - 0.06 * j * (Z > 0 ? 1 : 0.3); }
+  if (Y < 0) { const j = Math.pow(sstep(0, 1, -Y), 1.4); x *= 1 - 0.05 * j; z *= 1 - 0.06 * j * (Z > 0 ? 1 : 0.3); }
   // 肉髻（頂部隆起）
   y += 0.065 * sstep(0.7, 0.96, Y);
   x *= 1 - 0.05 * sstep(0.6, 0.95, Y);
@@ -111,7 +111,7 @@ function hairDirs() {
     const X = r * Math.cos(a), Z = r * Math.sin(a);
     const [x, y] = headPoint(X, Y, Z);
     const front = sstep(-0.25, 0.55, Z);
-    const lim = -0.24 + front * (0.115 - 0.75 * x * x + 0.24);
+    const lim = -0.24 + front * (0.088 - 0.8 * x * x + 0.24);
     if (y < lim) continue;
     if (Math.abs(X) > 0.72 && y < 0.04 && Z > -0.45) continue; // 耳周
     out.push([X, Y, Z]);
@@ -182,8 +182,8 @@ function makeBodySDF(headC) {
     let d = sdEll(px, py, pz, 0, y(2.28), 0.33, 0.8, 0.8, 0.55);
     d = smin(d, sdEll(px, py, pz, 0, y(1.35), 0.38, 0.78, 0.82, 0.6), 0.35);
     d = smin(d, sdEll(ax, py, pz, 0.67, y(2.72), 0.3, 0.37, 0.3, 0.37), 0.3);        // 肩
-    d = smin(d, sdCap(px, py, pz, neckA, neckB, 0.23, 0.21), 0.16);                   // 頸
-    d = smin(d, sdEll(px, py, pz, 0, y(2.86), 0.16, 0.5, 0.24, 0.34), 0.2);          // 項
+    d = smin(d, sdCap(px, py, pz, neckA, neckB, 0.205, 0.19), 0.16);                   // 頸
+    d = smin(d, sdEll(px, py, pz, 0, y(2.86), 0.12, 0.4, 0.22, 0.3), 0.2);          // 項
     // 臂：上臂（袖）→ 肘 → 前臂 → 定印
     const sh = [0.84, y(2.6), 0.27], el = [1.08, y(1.4), 0.46], wr = [0.4, y(0.82), 1.0];
     d = smin(d, sdCap(ax, py, pz, sh, el, 0.28, 0.24), 0.18);

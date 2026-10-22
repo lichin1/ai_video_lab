@@ -11,6 +11,7 @@ import { makeLeafGeometry } from './leaf.js';
 const V = THREE.Vector3;
 const UP = new V(0, 1, 0);
 const SUN = new V(...sunDirection()).normalize();
+const SHADOW_FRACTION = 0.3;
 const clamp01 = (x) => Math.min(1, Math.max(0, x));
 
 // 葉色：金黃 → 橙 → 朱 → 紅 → 深紅
@@ -179,8 +180,10 @@ function computeExposure(leaves, { cell = 0.35, k = 0.55, floor = 0.1 } = {}) {
   }
 }
 
-function leafMesh(geo, material, leaves, { castShadow = true, receiveShadow = false } = {}) {
-  castShadow = false;
+function leafMesh(geo, material, leaves, { castShadow = true, receiveShadow = false, shadowFraction = 1 } = {}) {
+  // 打亂順序（固定種子），讓前 shadowFraction 比例的葉片成為均勻子集：陰影只畫這部分以省時間
+  const sr = makeRng('leaf-order-' + leaves.length);
+  for (let i = leaves.length - 1; i > 0; i--) { const j = Math.floor(sr() * (i + 1)); [leaves[i], leaves[j]] = [leaves[j], leaves[i]]; }
   const mesh = new THREE.InstancedMesh(geo, material, leaves.length);
   const m = new THREE.Matrix4();
   const ex = new Float32Array(leaves.length);
@@ -197,6 +200,11 @@ function leafMesh(geo, material, leaves, { castShadow = true, receiveShadow = fa
   if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
   mesh.castShadow = castShadow;
   mesh.receiveShadow = receiveShadow;
+  if (castShadow && shadowFraction < 1) {
+    const full = leaves.length, part = Math.max(1, Math.round(full * shadowFraction));
+    mesh.onBeforeShadow = () => { mesh.count = part; };
+    mesh.onAfterShadow = () => { mesh.count = full; };
+  }
   mesh.computeBoundingSphere();
   return mesh;
 }
@@ -308,11 +316,11 @@ export function buildMaples(group, leafMat) {
     group.add(branch);
     const near = isHero ? leaves.filter((l) => l.p.distanceTo(info.Fm) < 2.2) : [];
     const far = isHero ? leaves.filter((l) => l.p.distanceTo(info.Fm) >= 2.2) : leaves;
-    const lm = leafMesh(flatGeo, leafMat, far);
+    const lm = leafMesh(flatGeo, leafMat, far, { shadowFraction: SHADOW_FRACTION });
     lm.name = `maple-${ti}-leaves`;
     group.add(lm);
     if (near.length) {
-      const nm = leafMesh(foldGeo, leafMat, near);
+      const nm = leafMesh(foldGeo, leafMat, near, { shadowFraction: SHADOW_FRACTION });
       nm.name = `maple-${ti}-leaves-near`;
       group.add(nm);
     }

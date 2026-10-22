@@ -195,7 +195,7 @@ export function buildRoof(bk) {
     }
     const shY = ridgeTop - 0.42;
     for (const sx of [-1, 1]) {
-      const m = M([sx * (gxE - 0.05), shY, 0], [0, sx > 0 ? Math.PI : 0, 0]);
+      const m = M([sx * (gxE - 0.05), shY, 0], [0, sx > 0 ? Math.PI : 0, 0], [1.35, 1.0, 1.15]);
       bk.add('gold', meterUV(normalizeGeo(body.clone())), m);
       for (const r of ribs) bk.add('gold', meterUV(normalizeGeo(r.clone())), m);
     }

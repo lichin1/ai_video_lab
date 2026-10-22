@@ -36,7 +36,7 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 document.body.appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
-scene.fog = new THREE.FogExp2(fogColor, 0.0024);
+scene.fog = new THREE.FogExp2(fogColor, 0.0016);
 const sky = makeSky();
 scene.add(sky);
 scene.environment = bakeEnvironment(renderer);
