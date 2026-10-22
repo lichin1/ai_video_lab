@@ -134,5 +134,8 @@ window.renderAt = async (t, cam) => {
   }
   return { triangles: countTriangles(), calls: renderer.info.render.calls };
 };
+// 預先編譯所有 shader，第一格不再多花幾十秒
+renderer.compile(scene, camera);
+
 window.sceneInfo = () => ({ triangles: countTriangles() });
 window.ready = true;

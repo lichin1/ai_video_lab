@@ -35,7 +35,7 @@ function distToSeg(p, a, b) {
 }
 
 /** 鏡頭 10 的資訊：焦點、起始鏡位、視線基底、整段鏡頭路徑取樣 */
-function heroShotInfo() {
+export function heroShotInfo() {
   const F = focusPoints().maple;
   let idx = shots.findIndex((s) => s.focus.every((v, i) => Math.abs(v - F[i]) < 1e-6));
   if (idx < 0) idx = shots.length - 1;
@@ -52,7 +52,7 @@ function heroShotInfo() {
 }
 
 // ── 單棵樹的枝幹生成 ────────────────────────────────────────────────
-function growTree(spec, ti, { avoid = null } = {}) {
+function growTree(spec, ti, { avoid = null, keepTwigs = false } = {}) {
   const rng = makeRng('maple-tree-' + ti);
   const H = spec.height, C = spec.crown;
   const base = new V(spec.pos[0], heightAt(spec.pos[0], spec.pos[2]), spec.pos[2]);
@@ -90,8 +90,9 @@ function growTree(spec, ti, { avoid = null } = {}) {
       radii.push(r0 + (rEnd - r0) * (k / segs) ** 0.8);
     }
     if (pts.length < 2) return;
+    const tiny = r0 < 0.011 && !keepTwigs;
     const bump = depth === 0 ? (i, j, s) => 1 + 0.07 * Math.sin(j * 2.3 + s * 2.1) * Math.exp(-s * 0.8) + 0.04 * Math.sin(j * 5.1) : null;
-    bld.tube(pts, radii, radialFor(r0), { vScale: 1, bump });
+    if (!tiny) bld.tube(pts, radii, radialFor(r0), { vScale: 1, bump });
     if (blocked) return;
     if (depth === 0) trunkTop = p.clone();
     if (depth >= 5) for (let k = 1; k < pts.length - 1; k++) tips.push({ p: pts[k], d: d.clone(), w: 0.6 });
@@ -291,8 +292,8 @@ export function buildMaples(group, leafMat) {
     const isHero = ti === heroIdx;
     const sightEnd = info.Fm.clone().addScaledVector(info.vdir, 1.0);
     const avoid = isHero ? (p) => info.pathDist(p) < 0.24 || distToSeg(p, info.cam0, sightEnd) < 0.38 : null;
-    const tree = growTree(spec, ti, { avoid });
-    let leaves = scatterLeaves(tree, isHero ? 30000 : 26000, isHero ? (p) => (p.distanceTo(info.Fm) < 2.5 ? 0.12 : 0.18) : 0.21, ti, noise);
+    const tree = growTree(spec, ti, { avoid, keepTwigs: isHero });
+    let leaves = scatterLeaves(tree, isHero ? 30000 : 21000, isHero ? (p) => (p.distanceTo(info.Fm) < 2.5 ? 0.12 : 0.18) : 0.23, ti, noise);
     let hero = [];
     if (isHero) {
       const { Fm, cam0, pathDist } = info;

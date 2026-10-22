@@ -19,16 +19,16 @@ export const shots = [
   { name: '風鈴 → 五重塔', focus: F.chime,
     near: { az: 205, el: 4, dist: 0.75 }, far: { look: [36, 14, -8], az: 218, el: 10, dist: 62 }, fov: [34, 40], aperture: 0.02 },
   { name: '佛像的臉 → 佛像與主殿', focus: F.buddhaFace,
-    near: { az: 162, el: 2, dist: 1.0 }, far: { look: [-16, 6, -20], az: 155, el: 14, dist: 72 }, fov: [32, 42], aperture: 0.014 },
+    near: { az: 184, el: 2, dist: 1.0 }, far: { look: [-21, 6, -17], az: 158, el: 14, dist: 66 }, fov: [32, 42], aperture: 0.014 },
   { name: '大提燈 → 山門正面', focus: F.chochin,
-    near: { az: 178, el: -6, dist: 1.9 }, far: { look: [0, 7, 64], az: 186, el: 9, dist: 50 }, fov: [36, 42], aperture: 0.01 },
+    near: { az: 178, el: -6, dist: 3.1 }, far: { look: [0, 7, 64], az: 186, el: 9, dist: 50 }, fov: [36, 42], aperture: 0.01 },
   { name: '擬寶珠 → 逆光拱橋', focus: F.giboshi,
-    near: { az: 80, el: 8, dist: 0.6 }, far: { look: [0, 1.5, 30], az: 72, el: 16, dist: 46 }, fov: [34, 42], aperture: 0.022 },
+    near: { az: 130, el: 8, dist: 0.6 }, far: { look: [0, 1.5, 30], az: 85, el: 16, dist: 46 }, fov: [34, 42], aperture: 0.022 },
   { name: '吊燈籠 → 主殿正面', focus: F.hallLantern,
     near: { az: 150, el: -8, dist: 0.95 }, far: { look: [0, 8, -34], az: 190, el: 8, dist: 58 }, fov: [34, 44], aperture: 0.016 },
   { name: '相輪寶珠 → 塔與主殿俯瞰', focus: F.finial,
     near: { az: 232, el: 6, dist: 2.4 }, far: { look: [18, 8, -18], az: 118, el: 28, dist: 115 }, fov: [34, 42], aperture: 0.01 },
-  { name: '錦鯉 → 越池望主殿', focus: F.koiSpot,
+  { name: '錦鯉 → 越池望主殿', focus: F.koiSpot, lookExp: 1.35, // 池塘分區依此曲線安排錦鯉經過時間
     near: { az: 180, el: 62, dist: 1.3 }, far: { look: [0, 5, -12], az: 176, el: 18, dist: 82 }, fov: [36, 42], aperture: 0.012 },
   { name: '逆光楓葉 → 空拍全寺', focus: F.maple,
     near: { az: 67.5, el: -6, dist: 0.55 }, far: { look: [4, 0, 6], az: 150, el: 46, dist: 230 }, fov: [36, 48], aperture: 0.024 },
@@ -65,7 +65,8 @@ export function cameraAt(t) {
   const local = t - i * T;
   const s = shots[i];
   const e = shotProgress(local);
-  const look = lerp3(s.focus, s.far.look, Math.pow(e, 1.35));
+  // 視線目標比鏡頭距離晚一點才移向全景，特寫物件在拉遠初段留在畫面內
+  const look = lerp3(s.focus, s.far.look, Math.pow(e, s.lookExp ?? 3.0));
   const az = angLerp(s.near.az, s.far.az, e);
   const el = lerp(s.near.el, s.far.el, e);
   const dist = s.near.dist * Math.pow(s.far.dist / s.near.dist, e);

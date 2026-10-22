@@ -133,7 +133,7 @@ export function buildGroundCover(group) {
   grassGeo.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
   const grassMat = new THREE.MeshStandardMaterial({ name: 'grassTuft', vertexColors: true, side: THREE.DoubleSide, roughness: 0.9 });
   const tufts = [];
-  for (let tries = 0; tufts.length < 4200 && tries < 80000; tries++) {
+  for (let tries = 0; tufts.length < 2600 && tries < 80000; tries++) {
     const x = rng.range(P.xMin, P.xMax), z = rng.range(P.zMin, P.zMax);
     const rim = pondRimDist(x, z);
     let pref = 0.45 * Math.max(0, noise(x / 9 + 40, z / 9) - 0.35);

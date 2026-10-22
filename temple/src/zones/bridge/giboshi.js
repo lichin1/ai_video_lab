@@ -83,7 +83,7 @@ export function giboshiMaterial() {
       }
       verd = Math.min(1, verd * 1.15);
       const base = [128 + fine * 18, 86 + fine * 12, 48 + fine * 8];
-      const vg = [78 + fine * 14, 134 + fine * 16, 112 + fine * 12];
+      const vg = [104 + fine * 14, 162 + fine * 16, 136 + fine * 12];
       const dark = 0.85 + blot * 0.15;
       const i = (y * S + x) * 4;
       for (let k = 0; k < 3; k++) img.data[i + k] = Math.max(0, Math.min(255, (base[k] * (1 - verd * 0.9) + vg[k] * verd * 0.9) * dark));

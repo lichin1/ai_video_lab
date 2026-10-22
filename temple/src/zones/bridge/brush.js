@@ -131,14 +131,15 @@ export function drawGlyph(g, ch, box, seed = 'brush', color = [18, 12, 10]) {
       const lw = (st.w * S / NB) * 2.4 * (0.7 + rng() * 0.6);
       g.strokeStyle = `rgba(${color[0]},${color[1]},${color[2]},${(0.55 + 0.4 * ink).toFixed(3)})`;
       g.lineWidth = lw;
+      g.lineCap = 'butt';
       let drawing = false;
       g.beginPath();
       for (let i = 0; i < pts.length; i++) {
         const t = pts[i].s / L;
-        const n = noise(b * 0.73, pts[i].s * 22) * 0.5 + 0.5;
-        const dryness = Math.max(0, t - dryStart) * 2.4 + (edge > 0.9 ? 0.25 : 0);
+        const n = noise(b * 0.37, pts[i].s * 7) * 0.5 + 0.5;
+        const dryness = Math.max(0, t - dryStart) * 2.4;
         const gap = n < dryness * 0.75;
-        const rough = edge > 0.8 ? noise(b * 1.7 + 50, pts[i].s * 60) * 0.06 : 0;
+        const rough = edge > 0.8 ? noise(50 + si, pts[i].s * 14) * 0.05 : 0;
         const [x, y] = P(i, (o + rough) * width[i] * S * 0.5);
         if (gap) { if (drawing) { g.stroke(); g.beginPath(); drawing = false; } continue; }
         if (!drawing) { g.moveTo(x, y); drawing = true; } else g.lineTo(x, y);
@@ -147,7 +148,7 @@ export function drawGlyph(g, ch, box, seed = 'brush', color = [18, 12, 10]) {
     }
     // 3) 墨暈：邊緣少量墨點滲出
     g.fillStyle = `rgba(${color[0]},${color[1]},${color[2]},0.35)`;
-    for (let k = 0; k < 40; k++) {
+    for (let k = 0; k < 6; k++) {
       const i = Math.floor(rng() * pts.length);
       const side = rng() < 0.5 ? -1 : 1;
       const [x, y] = P(i, side * width[i] * S * (0.48 + rng() * 0.08));

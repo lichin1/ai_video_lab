@@ -66,7 +66,7 @@ const woodTex = canvasTexture('tex-wood', TEX_SIZE, (g, s, r, n) =>
     return [clamp255(120 * k), clamp255(82 * k), clamp255(52 * k)];
   }));
 
-// 屋瓦：本瓦葺的明暗條紋（沿 u 每 0.3 m 一列筒瓦），加上青灰色斑
+// 屋瓦：本瓦葺的明暗條紋（沿 u 每 1/3 m 一列筒瓦），加上青灰色斑
 const tileTex = canvasTexture('tex-tile', TEX_SIZE, (g, s, r, n) =>
   pixelFill(g, s, n, (u, v, N) => {
     const rows = 1 / 0.3;
@@ -133,7 +133,7 @@ export const mat = {
   gold: new THREE.MeshStandardMaterial({ name: 'gold', map: goldTex, color: 0xffffff, roughness: 0.28, metalness: 1.0 }),
   /** 青銅（帶銅鏽）：佛像、吊燈籠、擬寶珠、風鈴、相輪 */
   bronze: new THREE.MeshStandardMaterial({ name: 'bronze', map: bronzeTex, roughnessMap: bronzeRough, roughness: 0.6, metalness: 0.85 }),
-  /** 屋瓦：深灰本瓦葺；uv 的 u 跨越瓦列（每 0.3 m 一列）、v 沿屋面斜向 */
+  /** 屋瓦：深灰本瓦葺；uv 的 u 跨越瓦列（每 1/3 m 一列，即每單位 3 列）、v 沿屋面斜向 */
   roofTile: new THREE.MeshStandardMaterial({ name: 'roofTile', map: tileTex, normalMap: tileNormal, normalScale: new THREE.Vector2(1.2, 1.2), roughness: 0.62, metalness: 0.15 }),
   /** 木頭：素木、地板、垂木木口；v 方向為木紋方向 */
   wood: new THREE.MeshStandardMaterial({ name: 'wood', map: woodTex, roughness: 0.78, metalness: 0 }),
