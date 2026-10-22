@@ -33,6 +33,9 @@ renderer.toneMappingExposure = 1.0;
 renderer.shadowMap.enabled = true;
 renderer.info.autoReset = false; // composer 有多個 pass，改成每格手動歸零才能看到整格的 draw call
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+// 太陽固定、場景幾乎全是靜物：陰影貼圖只算一次（錦鯉、落葉、風鈴等小動態物的影子會停在第一次的位置，肉眼看不出）
+renderer.shadowMap.autoUpdate = false;
+renderer.shadowMap.needsUpdate = true;
 document.body.appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
@@ -65,6 +68,19 @@ let composer = null, bokeh = null, grade = null;
 if (usePost) {
   composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(W, H, { type: THREE.HalfFloatType, samples: 4 }));
   composer.addPass(new RenderPass(scene, camera));
+  // 限幅：單一像素的極亮值（水面閃光、金屬高光）或 NaN 會被 bloom 擴散成整片白霧，先夾到合理範圍
+  composer.addPass(new ShaderPass({
+    uniforms: { tDiffuse: { value: null } },
+    vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
+    fragmentShader: `uniform sampler2D tDiffuse; varying vec2 vUv;
+      void main(){
+        vec3 c = texture2D(tDiffuse, vUv).rgb;
+        if (!(c.r == c.r && c.g == c.g && c.b == c.b) || any(greaterThan(c, vec3(1e4)))) c = vec3(0.0);
+        float m = max(c.r, max(c.g, c.b));
+        if (m > 24.0) c *= 24.0 / m;
+        gl_FragColor = vec4(c, 1.0);
+      }`,
+  }));
   bokeh = new BokehPass(scene, camera, { focus: 10, aperture: 0.0, maxblur: 0.008 });
   composer.addPass(bokeh);
   composer.addPass(new UnrealBloomPass(new THREE.Vector2(W, H), 0.32, 0.55, 0.92));
@@ -126,7 +142,7 @@ window.renderAt = async (t, cam) => {
     const focus = c.focus ?? camera.position.distanceTo(new THREE.Vector3(...c.look));
     bokeh.uniforms.focus.value = focus;
     bokeh.uniforms.aperture.value = c.aperture ?? 0;
-    bokeh.enabled = bokeh.uniforms.aperture.value > 0;
+    bokeh.enabled = bokeh.uniforms.aperture.value > 2e-4;
     grade.uniforms.uSeed.value = (t * 30) % 97;
     composer.render();
   } else {

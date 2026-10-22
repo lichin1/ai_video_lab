@@ -15,7 +15,7 @@ export const shots = [
   { name: '石燈籠 → 山門', focus: F.toro,
     near: { az: 15, el: 4, dist: 0.85 }, far: { look: [0, 6, 68], az: 340, el: 16, dist: 42 }, fov: [34, 42], aperture: 0.018 },
   { name: '蓮花 → 蓮池與拱橋', focus: F.heroLotus,
-    near: { az: 165, el: 24, dist: 0.7 }, far: { look: [0, 1.5, 28], az: 200, el: 20, dist: 58 }, fov: [34, 42], aperture: 0.02 },
+    near: { az: 165, el: 24, dist: 0.7 }, far: { look: [0, 1.5, 28], az: 200, el: 26, dist: 44 }, fov: [34, 42], aperture: 0.02 },
   { name: '風鈴 → 五重塔', focus: F.chime,
     near: { az: 205, el: 4, dist: 0.75 }, far: { look: [36, 14, -8], az: 218, el: 10, dist: 62 }, fov: [34, 40], aperture: 0.02 },
   { name: '佛像的臉 → 佛像與主殿', focus: F.buddhaFace,
@@ -27,11 +27,11 @@ export const shots = [
   { name: '吊燈籠 → 主殿正面', focus: F.hallLantern,
     near: { az: 150, el: -8, dist: 0.95 }, far: { look: [0, 8, -34], az: 190, el: 8, dist: 58 }, fov: [34, 44], aperture: 0.016 },
   { name: '相輪寶珠 → 塔與主殿俯瞰', focus: F.finial,
-    near: { az: 232, el: 6, dist: 2.4 }, far: { look: [18, 8, -18], az: 118, el: 28, dist: 115 }, fov: [34, 42], aperture: 0.01 },
+    near: { az: 232, el: 6, dist: 2.4 }, far: { look: [20, 9, -16], az: 205, el: 22, dist: 100 }, fov: [34, 42], aperture: 0.01 },
   { name: '錦鯉 → 越池望主殿', focus: F.koiSpot, lookExp: 1.35, // 池塘分區依此曲線安排錦鯉經過時間
     near: { az: 180, el: 62, dist: 1.3 }, far: { look: [0, 5, -12], az: 176, el: 18, dist: 82 }, fov: [36, 42], aperture: 0.012 },
   { name: '逆光楓葉 → 空拍全寺', focus: F.maple,
-    near: { az: 67.5, el: -6, dist: 0.55 }, far: { look: [4, 0, 6], az: 150, el: 46, dist: 230 }, fov: [36, 48], aperture: 0.024 },
+    near: { az: 67.5, el: -6, dist: 0.55 }, far: { look: [4, 0, 6], az: 150, el: 46, dist: 170 }, fov: [36, 46], aperture: 0.024 },
 ];
 
 // cubic-bezier(x1, y1, x2, y2) 時間曲線（同 CSS），以二分法解 x → y
