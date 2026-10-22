@@ -11,7 +11,7 @@ import { makeLeafGeometry } from './leaf.js';
 const V = THREE.Vector3;
 const UP = new V(0, 1, 0);
 const SUN = new V(...sunDirection()).normalize();
-const SHADOW_FRACTION = 0.3;
+const SHADOW_FRACTION = 0.18;
 const clamp01 = (x) => Math.min(1, Math.max(0, x));
 
 // 葉色：金黃 → 橙 → 朱 → 紅 → 深紅
@@ -293,13 +293,14 @@ export function buildMaples(group, leafMat) {
     const sightEnd = info.Fm.clone().addScaledVector(info.vdir, 1.0);
     const avoid = isHero ? (p) => info.pathDist(p) < 0.24 || distToSeg(p, info.cam0, sightEnd) < 0.38 : null;
     const tree = growTree(spec, ti, { avoid, keepTwigs: isHero });
-    let leaves = scatterLeaves(tree, isHero ? 30000 : 21000, isHero ? (p) => (p.distanceTo(info.Fm) < 2.5 ? 0.12 : 0.18) : 0.23, ti, noise);
+    let leaves = scatterLeaves(tree, isHero ? 30000 : 17000, isHero ? (p) => (p.distanceTo(info.Fm) < 2.5 ? 0.12 : 0.18) : 0.25, ti, noise);
     let hero = [];
     if (isHero) {
       const { Fm, cam0, pathDist } = info;
       const rr = makeRng('hero-tunnel');
       leaves = leaves.filter((l) => {
         if (pathDist(l.p) < 0.34) return false;
+        if (l.p.distanceTo(cam0) < 1.6 && rr() < 0.4) return false; // 鏡頭前的大片失焦葉：減少 overdraw
         if (distToSeg(l.p, cam0, Fm.clone().addScaledVector(info.vdir, 0.15)) < 0.2) return false;
         const w = l.p.clone().sub(Fm), along = w.dot(SUN);
         if (along > 0.25 && w.addScaledVector(SUN, -along).length() < 0.3 + along * 0.06) return rr() < 0.12;

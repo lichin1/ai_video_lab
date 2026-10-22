@@ -112,12 +112,12 @@ export function buildGroundCover(group) {
 
   // ── 草叢 ──
   const pos = [], col = [], nrm = [];
-  const BL = 7;
+  const BL = 13;
   const br = makeRng('grass-blade');
   const cBase = new THREE.Color('#3e5022'), cTip = new THREE.Color('#d8c070'), cMid = new THREE.Color('#7e8c3c');
   for (let b = 0; b < BL; b++) {
     const a = (b / BL) * Math.PI * 2 + br.range(-0.3, 0.3);
-    const lean = br.range(0.25, 0.6), h = br.range(0.6, 1), w = br.range(0.035, 0.06);
+    const lean = br.range(0.3, 0.75), h = br.range(0.5, 1), w = br.range(0.025, 0.045);
     const dx = Math.cos(a), dz = Math.sin(a);
     const sx = -dz * w, sz = dx * w;
     const pt = (t) => [dx * lean * t * t * h + dx * 0.03, h * t * (1 - 0.15 * t), dz * lean * t * t * h + dz * 0.03];
@@ -133,16 +133,22 @@ export function buildGroundCover(group) {
   grassGeo.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
   const grassMat = new THREE.MeshStandardMaterial({ name: 'grassTuft', vertexColors: true, side: THREE.DoubleSide, roughness: 0.9 });
   const tufts = [];
-  for (let tries = 0; tufts.length < 1800 && tries < 80000; tries++) {
+  // 一叢叢聚生：先選叢心（池畔、樹根、建築邊），再在叢心周圍放 3–8 株
+  for (let tries = 0; tufts.length < 1900 && tries < 60000; tries++) {
     const x = rng.range(P.xMin, P.xMax), z = rng.range(P.zMin, P.zMax);
     const rim = pondRimDist(x, z);
-    let pref = 0;
+    let pref = 0.02;
     if (rim > 0 && rim < 4) pref += 0.8;
     for (const t of trunks) if (Math.hypot(x - t[0], z - t[2]) < 3) pref += 0.5;
     if (keepOutDist(x, z) < 2.5) pref += 0.35;
     if (rng() > pref) continue;
-    if (!clear(x, z, 0.1)) continue;
-    tufts.push({ x, z, s: rng.range(0.4, 0.7), rot: rng() * 6, c: new THREE.Color(1, 1, 1).multiplyScalar(rng.range(0.7, 1.15)).lerp(new THREE.Color(1.1, 0.95, 0.7), rng() * 0.5) });
+    const n = rng.int(3, 8);
+    for (let k = 0; k < n; k++) {
+      const a = rng() * 6.283, r = 0.55 * Math.sqrt(rng());
+      const px = x + Math.cos(a) * r, pz = z + Math.sin(a) * r;
+      if (!clear(px, pz, 0.1)) continue;
+      tufts.push({ x: px, z: pz, s: rng.range(0.28, 0.5), rot: rng() * 6, c: new THREE.Color(1, 1, 1).multiplyScalar(rng.range(0.75, 1.15)).lerp(new THREE.Color(1.1, 0.95, 0.7), rng() * 0.5) });
+    }
   }
   {
     const mesh = new THREE.InstancedMesh(grassGeo, grassMat, tufts.length);

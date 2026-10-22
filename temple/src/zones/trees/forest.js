@@ -59,7 +59,7 @@ export function buildForest(group) {
 
   const cones = [], blobs = [];
   const sugi = [new THREE.Color('#0e2224'), new THREE.Color('#132a2a'), new THREE.Color('#163024'), new THREE.Color('#10252c')];
-  const broad = [new THREE.Color('#1f2e1e'), new THREE.Color('#2a2e1c'), new THREE.Color('#4e3418'), new THREE.Color('#5a2616'), new THREE.Color('#463e1a')];
+  const broad = [new THREE.Color('#1a2a1c'), new THREE.Color('#202a1a'), new THREE.Color('#1c2a20'), new THREE.Color('#3a2a16'), new THREE.Color('#40201a')];
   for (const band of trees.forestBands) {
     const rng = makeRng(band.seed);
     const noise = makeNoise2D(band.seed + '-density');
@@ -74,7 +74,7 @@ export function buildForest(group) {
       const cap = sunCorridorCap(x, z, y);
       if (cap < 5) continue;
       placed++;
-      if (rng() < 0.16) {
+      if (rng() < 0.12) {
         const r = Math.min(rng.range(2.6, 4.2), cap / 1.3);
         blobs.push({ x, y: y - 0.4, z, sx: r, sy: r * rng.range(0.7, 0.9), rot: rng() * 6, c: rng.pick(broad).clone().multiplyScalar(rng.range(0.8, 1.1)) });
       } else {

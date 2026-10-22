@@ -166,7 +166,7 @@ export function makeLeafMaterial(tex, { trans = 0.75, name = 'mapleLeaf' } = {})
       .replace('#include <common>', '#include <common>\nattribute float aExposure;\nvarying float vExposure;')
       .replace('#include <begin_vertex>', '#include <begin_vertex>\nvExposure = aExposure;');
     sh.fragmentShader = sh.fragmentShader
-      .replace('#include <common>', '#include <common>\nvarying float vExposure;\nuniform float uTrans;\nfloat gVein = 0.0;')
+      .replace('#include <common>', '#include <common>\n#undef USE_ENVMAP\nvarying float vExposure;\nuniform float uTrans;\nfloat gVein = 0.0;')
       .replace('#include <map_fragment>', 'vec4 leafTex = texture2D( map, vMapUv );')
       .replace('#include <color_fragment>', `#include <color_fragment>
         {

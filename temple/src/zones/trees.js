@@ -17,18 +17,6 @@ export default async function build() {
   buildPines(group);
   buildForest(group);
   buildGroundCover(group);
-  const q = new URLSearchParams(location.search);
-  if (q.get('treeHide')) { const re = new RegExp(q.get('treeHide')); group.traverse((o) => { if (o.isMesh && re.test(o.name)) o.visible = false; }); }
-  if (q.has('treeStats')) {
-    const out = {};
-    group.traverse((o) => {
-      if (!o.isMesh) return;
-      const g = o.geometry, n = (g.index ? g.index.count : g.attributes.position.count) / 3 * (o.isInstancedMesh ? o.count : 1);
-      const k = o.name.replace(/-\d+-/, '-#-');
-      out[k] = (out[k] || 0) + Math.round(n);
-    });
-    console.warn('tree tris ' + JSON.stringify(out));
-  }
   return {
     object: group,
     update(t) { falling.update(t); },
