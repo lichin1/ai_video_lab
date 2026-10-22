@@ -114,7 +114,7 @@ export function buildGroundCover(group) {
   const pos = [], col = [], nrm = [];
   const BL = 7;
   const br = makeRng('grass-blade');
-  const cBase = new THREE.Color('#34441e'), cTip = new THREE.Color('#c0a860'), cMid = new THREE.Color('#6a7a34');
+  const cBase = new THREE.Color('#3e5022'), cTip = new THREE.Color('#d8c070'), cMid = new THREE.Color('#7e8c3c');
   for (let b = 0; b < BL; b++) {
     const a = (b / BL) * Math.PI * 2 + br.range(-0.3, 0.3);
     const lean = br.range(0.25, 0.6), h = br.range(0.6, 1), w = br.range(0.035, 0.06);
@@ -133,16 +133,16 @@ export function buildGroundCover(group) {
   grassGeo.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
   const grassMat = new THREE.MeshStandardMaterial({ name: 'grassTuft', vertexColors: true, side: THREE.DoubleSide, roughness: 0.9 });
   const tufts = [];
-  for (let tries = 0; tufts.length < 2600 && tries < 80000; tries++) {
+  for (let tries = 0; tufts.length < 1800 && tries < 80000; tries++) {
     const x = rng.range(P.xMin, P.xMax), z = rng.range(P.zMin, P.zMax);
     const rim = pondRimDist(x, z);
-    let pref = 0.45 * Math.max(0, noise(x / 9 + 40, z / 9) - 0.35);
+    let pref = 0;
     if (rim > 0 && rim < 4) pref += 0.8;
     for (const t of trunks) if (Math.hypot(x - t[0], z - t[2]) < 3) pref += 0.5;
     if (keepOutDist(x, z) < 2.5) pref += 0.35;
     if (rng() > pref) continue;
     if (!clear(x, z, 0.1)) continue;
-    tufts.push({ x, z, s: rng.range(0.3, 0.6), rot: rng() * 6, c: new THREE.Color(1, 1, 1).multiplyScalar(rng.range(0.7, 1.15)).lerp(new THREE.Color(1.1, 0.95, 0.7), rng() * 0.5) });
+    tufts.push({ x, z, s: rng.range(0.4, 0.7), rot: rng() * 6, c: new THREE.Color(1, 1, 1).multiplyScalar(rng.range(0.7, 1.15)).lerp(new THREE.Color(1.1, 0.95, 0.7), rng() * 0.5) });
   }
   {
     const mesh = new THREE.InstancedMesh(grassGeo, grassMat, tufts.length);

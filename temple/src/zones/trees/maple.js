@@ -221,9 +221,9 @@ function heroSprays(tree, info, bld) {
   function spray(origin, ax, ay, len, nodes, scale, colorT, { term = 3, droop = 0.09 } = {}) {
     const dirIn = right.clone().multiplyScalar(ax).addScaledVector(camUp, ay).normalize();
     const side = new V().crossVectors(dirIn, vdir).normalize(); // 視平面內垂直細枝的方向
-    const pt = (s) => origin.clone().addScaledVector(dirIn, len * s).addScaledVector(side, -droop * s * s * len).addScaledVector(vdir, 0.03 * s);
+    const pt = (s) => origin.clone().addScaledVector(dirIn, len * s).addScaledVector(side, -droop * s * s * len + 0.012 * Math.sin(s * 9.0)).addScaledVector(vdir, 0.03 * s);
     const pts = [], radii = [];
-    for (let i = 0; i <= 12; i++) { pts.push(pt(i / 12)); radii.push(0.0068 - 0.0036 * (i / 12)); }
+    for (let i = 0; i <= 16; i++) { pts.push(pt(i / 16)); radii.push(0.0042 - 0.0024 * (i / 16)); }
     bld.tube(pts, radii, 5);
     const add = (p, ydir, nrm, s, t) => {
       const c = paletteAt(t + rng.gauss() * 0.06);
