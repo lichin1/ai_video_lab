@@ -1,14 +1,14 @@
 # 高雄市堅山慈善會簡介：手繪線稿風格動畫
 
-1920×1080、30fps、約 4 分 03 秒。中英雙語字幕燒進畫面，另附 `.srt`。
+1920×1080、30fps、約 4 分 14 秒。中英雙語字幕燒進畫面，另附 `.srt`。
 每一格畫面都用程式產生的 SVG 向量線稿繪製，沒有使用 AI 生成的圖像。
 
 ## 產出檔案
 
 | 檔案 | 內容 |
 |---|---|
-| `output/kianshan_intro_web.mp4` | 成品影片，交付版（94 MB，H.264 + AAC，響度 -15 LUFS） |
-| `output/kianshan_intro.mp4` | 高畫質母帶（193 MB，超過 GitHub 單檔上限，不放進 repo，執行 `qa/check.py` 會重新產生） |
+| `output/kianshan_intro_web.mp4` | 成品影片，交付版（91 MB，H.264 + AAC，響度 -15 LUFS） |
+| `output/kianshan_intro.mp4` | 高畫質母帶（228 MB，超過 GitHub 單檔上限，不放進 repo，執行 `qa/check.py` 會重新產生） |
 | `output/kianshan_intro.srt` | 中英雙語字幕檔 |
 | `output/script_and_sources.md` | 旁白稿與資料來源 |
 | `qa/` | 逐格檢查報告、各場景截圖 |

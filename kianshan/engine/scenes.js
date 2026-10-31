@@ -106,8 +106,9 @@ SCENES.s03_founders = {
   draw(L, D) {
     const t = CUR.t;
     // ---- interior, night of 85.9 ----
-    let s = `<rect x="-400" y="-300" width="2700" height="1700" fill="#efe1c6"/>`;
-    s += shape(rect(-300, -200, 2560, 1150), prog(0, 1), '#f2e6cc', 3);
+    // the room fades up while it draws, so the title never gives way to a bare wall
+    let s = op(eout(prog(0.2, 1.6)), `<rect x="-400" y="-300" width="2700" height="1700" fill="#efe1c6"/>`);
+    s += shape(rect(-300, -200, 2560, 1150), prog(0.2, 1.4), '#f2e6cc', 3);
     for (let i = 0; i < 26; i++) s += ink(`M${-300 + i * 100} 950V-200`, prog(0.3, 1.2), 1, '#e2d2b2');
     s += shape(rect(1380, 420, 380, 280), prog(0.4, 1.2), 'url(#nightGrad)', 3.2) + ink(sl(1570, 420, 1570, 700, 1) + sl(1380, 560, 1760, 560, 1), prog(0.8, 0.8), 3);
     s += shape(circ(1680, 480, 30), prog(1, 0.8), '#f6e7b8', 2.2);
