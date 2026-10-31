@@ -152,12 +152,12 @@ CH = {  # chord -> (bass midi, guitar voicing)
 PLAN = {
     "s01_opening": (["G", "D/F#", "Em", "Cadd9"], 0.35, False, False),
     "s02_title": (["C", "G", "Am", "D"], 0.55, True, False),
-    "s03_founding": (["G", "C", "G", "D"], 0.55, False, True),
-    "s04_chairs": (["Em", "C", "G", "D"], 0.5, True, False),
-    "s05_scholarship": (["G", "D", "Em", "C"], 0.65, True, True),
-    "s06_blood": (["C", "D", "G", "Em", "C", "D", "G", "G"], 0.8, True, True),
-    "s07_rain": (["Em", "C", "Am", "Bm"], 0.3, False, False),
-    "s08_recent": (["C", "G", "D", "Em"], 0.5, False, True),
+    "s03_founders": (["Em", "C", "G", "D"], 0.4, False, False),
+    "s04_growth": (["G", "C", "G", "D"], 0.55, False, True),
+    "s05_heritage": (["G", "D", "Em", "C"], 0.65, True, True),
+    "s06_relief": (["Em", "C", "Am", "Bm"], 0.35, False, False),
+    "s07_blood": (["C", "D", "G", "Em"], 0.8, True, True),
+    "s08_care": (["C", "G", "D", "Em"], 0.7, True, True),
     "s09_ending": (["C", "D", "Bm", "Em", "Am", "D", "G", "G"], 0.75, True, False),
     "s10_endcard": (["C", "D", "G", "G"], 0.4, True, False),
 }
@@ -224,7 +224,7 @@ def build_score():
                 add(L, sh, t0 + e8 * BEAT / 2, 0.8)
                 add(R, sh, t0 + e8 * BEAT / 2 + 0.004, 1.0)
         # harmonica lead: plays in the second half of each 4-bar phrase
-        if mel and (k % 4 in (1, 3) or sid in ("s09_ending", "s06_blood")):
+        if mel and (k % 4 in (1, 3) or sid in ("s09_ending", "s07_blood")):
             phrase = MELODY[(b + (2 if name in ("Em", "Am", "Bm") else 0)) % len(MELODY)]
             tt = t0
             chord_pcs = {v % 12 for v in voicing}
@@ -368,6 +368,24 @@ def tick():
     return np.sin(2 * np.pi * 2400 * t) * np.exp(-t * 200)
 
 
+def cricket():
+    n = int(0.22 * SR)
+    t = np.arange(n) / SR
+    pulses = (np.sin(2 * np.pi * 32 * t) > 0.3).astype(float)
+    return np.sin(2 * np.pi * 4600 * t) * pulses * np.sin(np.pi * t / 0.22)
+
+
+def applause(dur):
+    n = int(dur * SR)
+    out = np.zeros(n)
+    for _ in range(int(dur * 60)):
+        i = rng.integers(0, n - 3000)
+        m = int(0.012 * SR)
+        out[i:i + m] += sosfilt(bp(800, 5000), rng.standard_normal(m)) * np.exp(-np.arange(m) / (0.002 * SR)) * (0.4 + rng.random())
+    env = np.clip(np.minimum(np.arange(n) / (0.4 * SR), (n - np.arange(n)) / (1.2 * SR)), 0, 1)
+    return out * env / (np.abs(out).max() + 1e-9)
+
+
 def engine_arrival(dur=3.0):
     n = int(dur * SR)
     t = np.arange(n) / SR
@@ -386,64 +404,68 @@ def build_sfx():
         add(L, sig, t, g * (1 - pan) * 1.4)
         add(R, sig, t, g * pan * 1.4)
 
-    # ambience beds
-    for sid, strength in (("s01_opening", 0.10), ("s03_founding", 0.07), ("s04_chairs", 0.07), ("s05_scholarship", 0.05), ("s06_blood", 0.06), ("s09_ending", 0.08), ("s10_endcard", 0.05)):
-        s = SC[sid]
-        w = wind(s["dur"] + 1.6, strength)
+    # ambience beds: wind in the trees outdoors, crickets on the founders' night
+    for sid, strength in (("s01_opening", 0.10), ("s04_growth", 0.07), ("s05_heritage", 0.07), ("s07_blood", 0.06),
+                          ("s08_care", 0.05), ("s09_ending", 0.08), ("s10_endcard", 0.05)):
+        sc = SC[sid]
+        w = wind(sc["dur"] + 1.6, strength)
         w *= np.clip(np.minimum(np.arange(len(w)) / (0.8 * SR), (len(w) - np.arange(len(w))) / (1.0 * SR)), 0, 1)
-        place(w, s["start"] - 0.8, 1.0, 0.5 + 0.1 * rng.standard_normal())
-    s = SC["s07_rain"]
-    rb = rain_bed(s["dur"] + 2.0)
-    fade = np.clip(np.minimum(np.arange(len(rb)) / (1.2 * SR), (len(rb) - np.arange(len(rb))) / (1.5 * SR)), 0, 1)
-    place(rb * fade, s["start"] - 1.0, 0.16)
-    place(wind(s["dur"] + 2.0, 0.07) * fade, s["start"] - 1.0, 1.0)
+        place(w, sc["start"] - 0.8, 1.0, 0.5 + 0.1 * rng.standard_normal())
+    night = SC["s03_founders"]["lines"][1]["s"] - 0.5
+    for k in range(int(night / 0.9)):
+        place(cricket(), at("s03_founders", 0.6 + k * 0.9 + rng.random() * 0.2), 0.025, 0.2 + 0.6 * rng.random())
 
-    # birds — magpies when a magpie is on screen, yuhina whistles through daylight scenes
-    for sid, local in (("s01_opening", 4.5), ("s01_opening", 9.0), ("s01_opening", 17.0), ("s03_founding", 3.5), ("s06_blood", 3.0), ("s06_blood", 8.0), ("s10_endcard", 4.0)):
+    # birds: magpies when a magpie is on screen, yuhina whistles through daylight scenes
+    for sid, local in (("s01_opening", 4.5), ("s01_opening", 9.0), ("s01_opening", 16.0), ("s05_heritage", 4.0),
+                       ("s05_heritage", 16.0), ("s07_blood", 3.0), ("s10_endcard", 4.0)):
         place(magpie_call(3 + int(rng.integers(0, 2))), at(sid, local), 0.10, 0.3 + 0.4 * rng.random())
-    for sid, locs in (("s01_opening", [1.5, 7.0, 12.5, 20.5]), ("s02_title", [5.5, 9.5]), ("s04_chairs", [2.0, 14.0, 22.0]),
-                      ("s05_scholarship", [3.0, 16.0, 23.0]), ("s08_recent", [2.0]), ("s09_ending", [2.5, 9.0, 26.0]), ("s10_endcard", [7.5])):
+    for sid, locs in (("s01_opening", [1.5, 7.0, 12.5, 19.5]), ("s02_title", [5.5, 9.5]), ("s03_founders", [18.0, 23.0]),
+                      ("s04_growth", [2.0, 14.0]), ("s05_heritage", [8.0, 24.0, 31.0]), ("s08_care", [2.0, 15.0]),
+                      ("s09_ending", [2.5, 12.0, 30.0]), ("s10_endcard", [7.5])):
         for lc in locs:
             place(yuhina_song(), at(sid, lc), 0.07, 0.2 + 0.6 * rng.random())
             place(chirp_small(), at(sid, lc + 1.1), 0.04, rng.random())
 
     # pencil scratches while each scene draws itself on
-    for s in tl["scenes"]:
-        place(pencil(2.6), s["start"] + 0.1, 0.05, 0.45)
+    for sc in tl["scenes"]:
+        place(pencil(2.6), sc["start"] + 0.1, 0.05, 0.45)
     place(pencil(2.0), at("s02_title", 2.0), 0.05, 0.5)
 
-    # event foley
+    # event foley, keyed to the same narration times as the pictures
     place(pop(), line("s01_opening", 0) + 1.0, 0.18)
-    place(chime(88), line("s01_opening", 1) + 0.6, 0.06, 0.6)
+    place(chime(88), line("s01_opening", 1) + 1.0, 0.06, 0.6)
     place(chime(83), at("s02_title", 3.0), 0.06, 0.5)
     place(chime(79), at("s02_title", 3.4), 0.05, 0.5)
-    place(whoosh(1.2), line("s03_founding", 0) + 3.4, 0.08)
-    place(thud(80), line("s03_founding", 1) + 2.6, 0.22, 0.7)
-    place(chime(86), line("s04_chairs", 0) + 1.6, 0.05)
-    place(chime(88), line("s04_chairs", 0) + 4.4, 0.05)
-    place(chime(91), line("s04_chairs", 0) + 7.0, 0.06)
-    place(whoosh(1.0), line("s04_chairs", 1) - 0.4, 0.06)
-    place(thud(160), line("s04_chairs", 2) + 1.8, 0.06, 0.7)
-    place(whoosh(0.8), line("s05_scholarship", 0) + 2.2, 0.06)
-    place(chime(84), line("s05_scholarship", 0) + 3.4, 0.06)
-    for i in range(4):
-        place(pop(), line("s05_scholarship", 1) + 0.5 + i * 0.55, 0.10, 0.3 + 0.13 * i)
-    place(whoosh(1.4), line("s05_scholarship", 2) + 2.2, 0.08)
-    place(engine_arrival(3.2), line("s06_blood", 1) + 0.3, 0.14, 0.65)
-    place(engine_arrival(3.2), line("s06_blood", 1) + 1.1, 0.12, 0.75)
-    t0 = line("s06_blood", 3) + 0.2
-    for k in range(0, 372, 12):
-        u = k / 372
-        tt = t0 + 3.2 * (np.arccos(1 - 2 * u) / np.pi if u < 1 else 1)
-        place(tick(), tt, 0.05, 0.5)
-    place(chime(91), t0 + 3.3, 0.08)
-    place(thud(180), line("s07_rain", 1) + 1.6, 0.05, 0.7)
-    place(thud(75), line("s08_recent", 0) + 0.6, 0.24, 0.3)
-    for i in range(6):
-        place(whoosh(1.4), line("s08_recent", 0) + 1.4 + i * 0.55, 0.035, 0.3 + 0.1 * i)
-    place(chime(86), line("s09_ending", 0) + 4.8, 0.05)
+    place(chime(81), line("s03_founders", 0) + 1.6, 0.05)
+    place(thud(110), line("s03_founders", 1) + 1.3, 0.12, 0.6)
+    for i in range(10):
+        place(pop(), line("s03_founders", 1) + 1.35 + i * 0.09 + rng.random() * 0.05, 0.07, rng.random())
+    place(thud(170), line("s03_founders", 2) + 0.4, 0.06, 0.6)
+    place(whoosh(1.6), line("s04_growth", 0) - 0.3, 0.05)
+    for i in range(8):
+        place(chime(96 + (i % 3)), line("s04_growth", 1) + 1.2 + i * 0.45, 0.025, 0.7)
+    place(thud(75), line("s04_growth", 2) + 1.4, 0.24, 0.4)
+    place(chime(86), line("s05_heritage", 0) + 3.6, 0.05)
+    place(tick(), line("s05_heritage", 2) + 2.2, 0.12, 0.6)
+    for i in range(8):
+        place(pop(), line("s05_heritage", 2) + 2.25 + i * 0.08, 0.06, rng.random())
+    place(chime(88), line("s05_heritage", 3) + 1.6, 0.05)
+    place(chime(91), line("s05_heritage", 3) + 3.6, 0.06)
+    place(thud(180), line("s06_relief", 1) + 2.3, 0.07, 0.7)
+    place(thud(180), line("s06_relief", 1) + 2.55, 0.07, 0.7)
+    for i in range(11):
+        place(pop(), line("s06_relief", 2) + 0.6 + i * 0.22, 0.07, 0.3 + 0.04 * i)
+    place(chime(67), line("s06_relief", 3) + 0.4, 0.05, 0.5)
+    for start, total in ((line("s07_blood", 0) - 0.6, 369), (line("s07_blood", 0) + 1.2, 394)):
+        for k in range(0, total, 14):
+            u = k / total
+            place(tick(), start + 2.4 * np.arccos(1 - 2 * u) / np.pi, 0.04, 0.5)
+    place(chime(91), line("s07_blood", 0) + 3.7, 0.08)
+    place(chime(84), line("s08_care", 0) + 2.0, 0.05)
+    place(chime(88), line("s08_care", 1) + 1.6, 0.06)
+    place(applause(4.0), line("s08_care", 1) + 2.2, 0.10)
     for i, m in enumerate((79, 83, 86, 91)):
-        place(chime(m), line("s09_ending", 1) + 0.4 + i * 0.25, 0.04)
+        place(chime(m), line("s09_ending", 3) + 0.4 + i * 0.25, 0.04)
     return L, R
 
 

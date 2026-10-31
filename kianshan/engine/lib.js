@@ -576,3 +576,331 @@ function agencyBadge(x, y, s, p, key, name, en) {
   out += txt(-146, 30, en, sub(p, 0.6, 1), { size: 18, anchor: 'start', italic: true, latin: true, font: "'Noto Serif', 'DejaVu Serif', serif", weight: 400, col: INK2, width: en.length * 9.2 });
   return at(x, y, s, out);
 }
+
+// =====================================================================
+// v2 detail pass: watercolour bleed, pencil hatching, contact shadows,
+// parallax, and finer versions of people, trees and buildings. These
+// declarations replace the simpler v1 ones above.
+// =====================================================================
+
+// Watercolour fill: soft pigment edge that bleeds a little past the line.
+function wash(d, p = 1, col = PAPER, op_ = 1) {
+  const o = eout(sub(p, 0.15, 0.75)) * op_;
+  if (o <= 0.001) return '';
+  const bleed = col === PAPER ? '' : ` stroke="${col}" stroke-width="5" stroke-opacity="${(0.35 * o).toFixed(3)}" stroke-linejoin="round"`;
+  return `<path d="${d}" fill="${col}" fill-opacity="${o.toFixed(3)}"${bleed}/>`;
+}
+// Pencil hatching laid over a shape (shadow side, depth).
+function hatch(d, p = 1, op_ = 0.5, which = 'hatch') {
+  const o = eout(sub(p, 0.6, 1)) * op_;
+  return o <= 0.01 ? '' : `<path d="${d}" fill="url(#${which})" opacity="${o.toFixed(3)}"/>`;
+}
+function contactShadow(x, y, w, p = 1, o = 0.16) {
+  return op(eout(p) * o, `<ellipse cx="${r1(x)}" cy="${r1(y)}" rx="${r1(w)}" ry="${r1(w * 0.16)}" fill="${INK}"/>`);
+}
+// Parallax: depth f (1 = moves with the world, 0 = fixed to the screen).
+function para(f, content) {
+  const cam = CUR.cam || [960, 540, 1];
+  const dx = (cam[0] - 960) * (1 - f), dy = (cam[1] - 540) * (1 - f) * 0.6;
+  return g(content, `translate(${r1(dx)} ${r1(dy)})`);
+}
+function skyGrad(x0 = -800, x1 = 9000, id = 'skyGrad') {
+  return `<rect x="${x0}" y="-700" width="${x1 - x0}" height="1500" fill="url(#${id})"/>`;
+}
+function glowAt(x, y, r, o = 1) { return op(o, `<circle cx="${r1(x)}" cy="${r1(y)}" r="${r1(r)}" fill="url(#glow)"/>`); }
+function fallingLeaves(x0, x1, y0, y1, n = 6, seed = 1) {
+  let out = '';
+  for (let i = 0; i < n; i++) {
+    const per = 6 + hsh(i, seed) * 4;
+    const k = ((CUR.T / per) + hsh(seed, i)) % 1;
+    const x = x0 + hsh(i, seed, 2) * (x1 - x0) + Math.sin(k * 9 + i) * 30;
+    const y = lerp(y0, y1, k);
+    out += op(Math.sin(k * Math.PI), at(x, y, 1, shape('M0 -6Q6 0 0 6Q-6 0 0 -6Z', 1, i % 2 ? '#c8b46a' : C.leaf, 1.4), k * 720 + i * 40));
+  }
+  return out;
+}
+
+// ---- people, finer ----
+// o: shirt, pants, hair (short|long|bun|gray|cap|bald|pony), kid, elder,
+// dress, vest, glasses, walk, arms, face, hold, front, smile, bow (0..1)
+function person(x, y, s, p, o = {}) {
+  const ph = o.walk;
+  const walking = ph !== undefined && ph !== null;
+  const swing = walking ? Math.sin(ph) * 0.42 : 0;
+  const bob = walking ? Math.abs(Math.cos(ph)) * 3 : Math.sin(CUR.T * 1.6 + x) * 1.2;
+  const shirt = o.shirt || C.blue, pants = o.pants || '#7d705f', skin = o.skin || C.skin;
+  const kid = o.kid ? 0.72 : 1;
+  const lean = (o.elder ? 0.12 : 0) + (o.bow || 0) * 0.45;
+  const hipY = -78, shY = -132 - bob, headY = -152 - bob;
+  const pa = sub(p, 0, 0.5), pb = sub(p, 0.2, 0.7), pc = sub(p, 0.4, 1);
+  const leg = (sgn) => {
+    const a = swing * sgn;
+    const kx = Math.sin(a) * 38, ky = hipY + Math.cos(a) * 38;
+    const fx = kx + Math.sin(a - (walking ? Math.max(0, -a) * 0.8 : 0)) * 40, fy = Math.min(0, ky + 40);
+    return { d: `M${sgn * 6} ${hipY - bob}L${r1(kx + sgn * 5)} ${r1(ky - bob * 0.5)}L${r1(fx + sgn * 5)} ${r1(fy)}`, fx: fx + sgn * 5, fy };
+  };
+  const arm = (sgn, ang) => {
+    const a = ang !== undefined ? ang : -swing * sgn * 0.9;
+    const ex = Math.sin(a) * 28 + sgn * 15, ey = shY + 8 + Math.cos(a) * 28;
+    const a2 = ang !== undefined ? a * 1.15 : a * 1.3;
+    const hx = ex + Math.sin(a2) * 26, hy = ey + Math.cos(a2) * 26;
+    return { d: `M${sgn * 15} ${shY + 6}L${r1(ex)} ${r1(ey)}L${r1(hx)} ${r1(hy)}`, hx, hy };
+  };
+  const arms = o.arms || [];
+  const sleeve = (A) => tube(A.d, pc, shirt, 9);
+  const hand = (A) => shape(circ(A.hx, A.hy, 4.6, 10), pc, skin, 1.8);
+  const shoe = (L) => shape(`M${r1(L.fx - 4)} ${r1(L.fy - 4)}q10 -3 14 4q-6 3 -14 0Z`, pa, '#4a3d33', 1.6);
+  let out = '';
+  const A0 = arm(-1, arms[0]), A1 = arm(1, arms[1]);
+  const L0 = leg(-1), L1 = leg(1);
+  out += sleeve(A0) + hand(A0);
+  if (!o.dress) {
+    out += tube(L0.d, pa, pants, 11) + shoe(L0);
+    out += tube(L1.d, pa, pants, 11) + shoe(L1);
+  } else {
+    out += tube(L0.d, pa, skin, 7) + shoe(L0) + tube(L1.d, pa, skin, 7) + shoe(L1);
+  }
+  const hem = o.dress ? 30 : 6;
+  const torso = poly([[-18, shY], [18, shY], [16 + hem * 0.45, hipY - bob + hem], [-16 - hem * 0.45, hipY - bob + hem]], true, 0.8);
+  out += shape(torso, pb, shirt, 3);
+  out += hatch(poly([[6, shY + 4], [18, shY], [16 + hem * 0.45, hipY - bob + hem], [4, hipY - bob + hem]], true, 0.4), pb, 0.35);
+  if (!o.dress) out += ink(`M-16 ${hipY - bob + 1}H16`, pc, 1.6, INK2);                         // belt line
+  out += ink(`M-6 ${shY + 1}L0 ${shY + 9}L6 ${shY + 1}`, pc, 1.6, INK2);                          // collar
+  if (o.vest) {
+    out += shape(poly([[-18, shY + 2], [-5, shY + 2], [-6, hipY - bob + 4], [-17, hipY - bob + 4]], true, 0.5), pb, C.vest, 2);
+    out += shape(poly([[18, shY + 2], [5, shY + 2], [6, hipY - bob + 4], [17, hipY - bob + 4]], true, 0.5), pb, C.vest, 2);
+    out += ink(`M-17 ${shY + 30}H-6M6 ${shY + 30}H17`, pc, 2.2, '#fff6e0');                       // reflective strip
+  }
+  out += tube(`M0 ${shY}V${headY + 12}`, pb, skin, 6);
+  // head
+  out += shape(ell(0, headY, 15.5, 16.5, 16, 0.03), pb, skin, 2.8);
+  out += shape(circ(-15, headY + 1, 3.6, 8), pb, skin, 1.6);                                       // ear
+  const hair = o.hair || 'short', hc = o.hairCol || (hair === 'gray' ? '#bdb6ac' : hair === 'bun' ? '#8a8178' : C.hair);
+  const H = {
+    short: `M-16 ${headY - 2}Q-17 ${headY - 21} 0 ${headY - 21}Q17 ${headY - 21} 17 ${headY - 4}Q9 ${headY - 14} -4 ${headY - 11}Q-10 ${headY - 6} -16 ${headY - 2}Z`,
+    gray: `M-16 ${headY - 2}Q-17 ${headY - 21} 0 ${headY - 21}Q17 ${headY - 21} 17 ${headY - 4}Q9 ${headY - 14} -4 ${headY - 11}Q-10 ${headY - 6} -16 ${headY - 2}Z`,
+    long: `M-18 ${headY + 16}Q-21 ${headY - 22} 0 ${headY - 21}Q21 ${headY - 22} 18 ${headY + 16}Q13 ${headY - 6} 2 ${headY - 11}Q-10 ${headY - 6} -18 ${headY + 16}Z`,
+    pony: `M-17 ${headY}Q-17 ${headY - 21} 0 ${headY - 21}Q17 ${headY - 21} 17 ${headY - 2}Q8 ${headY - 13} -17 ${headY}ZM-14 ${headY - 10}q-14 6 -10 24q4 -10 6 -16Z`,
+    bun: `M-16 ${headY - 2}Q-16 ${headY - 19} 0 ${headY - 19}Q16 ${headY - 19} 16 ${headY - 2}Q3 ${headY - 11} -16 ${headY - 2}ZM-8 ${headY - 26}a8 8 0 1 0 16 0a8 8 0 1 0 -16 0Z`,
+    cap: `M-17 ${headY - 3}Q-16 ${headY - 23} 0 ${headY - 23}Q16 ${headY - 23} 17 ${headY - 3}ZM10 ${headY - 6}h17v4h-17Z`,
+    bald: `M-16 ${headY + 2}Q-16 ${headY - 6} -12 ${headY - 8}M16 ${headY + 2}Q16 ${headY - 6} 12 ${headY - 8}`,
+  }[hair] || '';
+  if (hair === 'bald') out += ink(H, pc, 3, '#bdb6ac');
+  else out += shape(H, pc, hair === 'cap' ? (o.capCol || C.vest) : hc, 2);
+  const blink = (Math.sin(CUR.T * 0.9 + x * 0.3) > 0.985) ? 0.4 : 2.3;
+  out += op(pc, `<ellipse cx="6" cy="${headY - 1}" rx="2.1" ry="${blink}" fill="${INK}"/><ellipse cx="-5" cy="${headY - 1}" rx="2.1" ry="${blink}" fill="${INK}"/>` +
+    `<circle cx="10" cy="${headY + 6}" r="3.4" fill="${C.pink}" opacity="0.45"/><circle cx="-9" cy="${headY + 6}" r="3.4" fill="${C.pink}" opacity="0.45"/>`);
+  out += ink(`M2 ${headY - 9}q4 -2 8 0M-9 ${headY - 9}q4 -2 8 0`, pc, 1.5, hair === 'gray' || hair === 'bald' ? '#9a948c' : INK);
+  out += ink(`M1 ${headY + 1}l2 4l-3 0`, pc, 1.3, INK2);
+  out += ink(o.smile === false ? `M-4 ${headY + 9}h8` : `M-5 ${headY + 8}q5 4.5 10 0`, pc, 1.9);
+  if (o.glasses) out += ink(circ(-5, headY - 1, 5.2, 10) + circ(7, headY - 1, 5.2, 10) + `M0 ${headY - 1}h2`, pc, 1.5);
+  if (o.elder && hair !== 'bald') out += ink(`M-12 ${headY + 4}q2 2 4 0M8 ${headY + 4}q2 2 4 0`, pc, 1, INK2);
+  if (o.hold) out += op(pc, o.hold);
+  out += sleeve(A1) + hand(A1);
+  if (o.front) out += op(pc, o.front);
+  const body = g(out, `${o.face === -1 ? 'scale(-1 1) ' : ''}rotate(${(lean * 18).toFixed(2)} 0 ${hipY})`);
+  return contactShadow(x, y + 2, 26 * s * kid, pa) + at(x, y, s * kid, body);
+}
+
+// Rounded leafy tree made of several clumps, shaded on the lower right.
+function tree(x, y, s, p, kind = 'round') {
+  const sw = Math.sin(CUR.T * 1.1 + x * 0.01) * 2.2;
+  if (kind === 'palm') {
+    let fr = '';
+    for (let i = 0; i < 7; i++) {
+      const a = -Math.PI / 2 + (i - 3) * 0.48 + Math.sin(CUR.T * 1.3 + i) * 0.05;
+      const ex = Math.cos(a) * 88, ey = -150 + Math.sin(a) * 42 + 46;
+      fr += shape(`M0 -150Q${ex * 0.5} ${-194 + (ey + 150) * 0.2} ${ex} ${ey}Q${ex * 0.4} -160 0 -150Z`, sub(p, 0.3 + i * 0.05, 0.9), i % 2 ? C.leaf : '#9cbb80', 2.2);
+      fr += ink(`M0 -150Q${ex * 0.5} ${-180 + (ey + 150) * 0.2} ${ex * 0.95} ${ey}`, sub(p, 0.6, 1), 1.2, '#5f7a40');
+    }
+    let rings = '';
+    for (let k = 1; k < 7; k++) rings += ink(`M-5 ${-k * 21}q5 3 10 0`, sub(p, 0.4, 0.8), 1.4, INK2);
+    return contactShadow(x, y + 2, 40 * s, p) + at(x, y, s, tube(`M0 0Q8 -80 0 -150`, sub(p, 0, 0.5), '#b79b77', 11) + rings + g(fr, `rotate(${sw} 0 -150)`));
+  }
+  const trunk = tube(`M0 0Q2 -40 ${sw * 0.3} -96`, sub(p, 0, 0.5), C.brown, 13) + ink('M-4 -50l-14 -22M3 -62l12 -18', sub(p, 0.3, 0.6), 4, C.brown);
+  const clumps = [[-46, -112, 40, '#a9c48d'], [40, -118, 42, '#a2bf86'], [-8, -156, 50, '#b3cd96'], [-36, -150, 32, '#b8d09c'], [30, -160, 34, '#a9c48d']];
+  let crown = '';
+  clumps.forEach(([cx, cy, r, col], i) => { crown += shape(ell(cx, cy, r, r * 0.86, 16, 0.07), sub(p, 0.25 + i * 0.06, 0.95), col, 2.6); });
+  crown += hatch(ell(18, -110, 52, 34, 16, 0.05), sub(p, 0.6, 1), 0.45);
+  for (let i = 0; i < 9; i++) crown += ink(`M${-54 + i * 13} ${-120 - (i % 3) * 22}q4 -5 9 0`, sub(p, 0.75 + i * 0.02, 1), 1.6, '#5f7a40');
+  return contactShadow(x, y + 2, 60 * s, p) + at(x, y, s, trunk + g(crown, `rotate(${sw} 0 -70)`));
+}
+
+// Taiwanese townhouse with balcony rail, AC unit, rolling shutter and plants.
+function townhouse(x, y, s, p, o = {}) {
+  const w = o.w || 170, h = o.h || 260, floors = o.floors || 3;
+  const wall = o.wall || C.wall;
+  let out = shape(rect(-w / 2, -h, w, h), sub(p, 0, 0.5), wall, 3.2);
+  out += hatch(rect(w / 2 - 22, -h, 22, h, 0.4), sub(p, 0.3, 0.8), 0.45);
+  out += shape(poly([[-w / 2 - 10, -h], [w / 2 + 10, -h], [w / 2 + 4, -h - 18], [-w / 2 - 4, -h - 18]], true), sub(p, 0.2, 0.6), C.gray, 2.6);
+  const fh = (h - 100) / (floors - 1);
+  for (let f = 0; f < floors - 1; f++) {
+    const fy = -h + 24 + f * fh;
+    const ww = w - 44, wh = fh - 30;
+    out += shape(rect(-w / 2 + 22, fy, ww, wh), sub(p, 0.4 + f * 0.08, 0.8), o.lit ? '#f7dc9a' : '#dbe6e7', 2.4);
+    out += ink(sl(-w / 2 + 22 + ww / 3, fy, -w / 2 + 22 + ww / 3, fy + wh, 0.5) + sl(-w / 2 + 22 + ww * 2 / 3, fy, -w / 2 + 22 + ww * 2 / 3, fy + wh, 0.5), sub(p, 0.5, 0.9), 1.6);
+    if (!o.lit) out += ink(`M${-w / 2 + 26} ${fy + 6}l14 14M${-w / 2 + 34} ${fy + 4}l18 18`, sub(p, 0.7, 1), 1.4, '#ffffff');
+    // balcony rail
+    const ry = fy + wh + 4;
+    out += ink(sl(-w / 2 + 6, ry, w / 2 - 6, ry, 0.6), sub(p, 0.5, 0.9), 2.2);
+    for (let k = 0; k <= 8; k++) out += ink(`M${r1(-w / 2 + 10 + k * (w - 20) / 8)} ${ry}v12`, sub(p, 0.6, 0.95), 1.3, INK2);
+    out += ink(sl(-w / 2 + 6, ry + 12, w / 2 - 6, ry + 12, 0.6), sub(p, 0.6, 0.95), 2);
+    if (f === 0) out += shape(rect(w / 2 - 50, fy + 8, 34, 22, 0.4), sub(p, 0.7, 1), '#eeeae2', 1.8) + ink(`M${w / 2 - 46} ${fy + 14}h26M${w / 2 - 46} ${fy + 20}h26`, sub(p, 0.8, 1), 1, INK2);
+  }
+  out += shape(rect(-w / 2 + 14, -78, w - 28, 78), sub(p, 0.5, 0.9), o.door || '#d8cfbd', 2.6);
+  for (let i = 1; i < 7; i++) out += ink(sl(-w / 2 + 14, -78 + i * 11, w / 2 - 14, -78 + i * 11, 0.3), sub(p, 0.7, 1), 1.2, INK2);
+  if (o.sign) out += shape(rect(-w / 2 + 6, -104, w - 12, 24, 0.4), sub(p, 0.6, 1), '#fbf3e4', 2) + txt(0, -86, o.sign, sub(p, 0.7, 1), { size: 16 });
+  // potted plant by the door
+  out += at(-w / 2 - 2, 0, 1, shape(ell(0, -26, 14, 12, 12), sub(p, 0.75, 1), '#a9c48d', 1.8) + shape('M-12 0l3 -16h18l3 16Z', sub(p, 0.7, 1), '#c8916c', 1.8));
+  return contactShadow(x, y + 3, w * 0.6 * s, p, 0.12) + at(x, y, s, out);
+}
+function oldHouse(x, y, s, p, o = {}) {
+  const w = o.w || 300, h = o.h || 130;
+  let out = shape(rect(-w / 2, -h, w, h), sub(p, 0, 0.5), o.wall || C.wall2, 3);
+  // brick courses
+  for (let k = 1; k < 5; k++) out += ink(sl(-w / 2 + 4, -k * 24, w / 2 - 4, -k * 24, 0.5), sub(p, 0.6, 1), 1, '#c9b49a');
+  const roof = `M${-w / 2 - 40} ${-h + 4}Q${-w / 4} ${-h - 20} ${-w / 2 + 30} ${-h - 70}H${w / 2 - 30}Q${w / 4} ${-h - 20} ${w / 2 + 40} ${-h + 4}Z`;
+  out += shape(roof, sub(p, 0.1, 0.6), C.roof, 3.2);
+  out += hatch(`M${-w / 2 - 36} ${-h + 2}H${w / 2 + 36}L${w / 2 + 20} ${-h - 14}H${-w / 2 - 20}Z`, sub(p, 0.4, 0.9), 0.5);
+  for (let i = 0; i < 11; i++) { const xx = -w / 2 + 24 + i * (w - 48) / 10; out += ink(sl(xx, -h - 62, xx * 1.1, -h - 6, 0.8), sub(p, 0.5 + i * 0.03, 0.9), 1.4, INK2); }
+  out += ink(`M${-w / 2 + 30} ${-h - 70}q-16 -14 -30 -6M${w / 2 - 30} ${-h - 70}q16 -14 30 -6`, sub(p, 0.6, 1), 3);
+  const doorOpen = o.doorOpen || 0;
+  out += shape(rect(-34, -98, 68, 98), sub(p, 0.4, 0.8), '#f7dc9a', 2.6);
+  out += shape(rect(-34, -98, 68 * (1 - doorOpen * 0.8), 98), sub(p, 0.45, 0.85), '#b98f68', 2.6);
+  out += ink('M-26 -90h' + (52 * (1 - doorOpen * 0.8)) + 'M-26 -50h' + (52 * (1 - doorOpen * 0.8)), sub(p, 0.6, 0.9), 1.2, INK2);
+  if (o.plaque) out += shape(rect(-78, -h + 8, 156, 30, 0.3), sub(p, 0.6, 1), '#fbf1d8', 2.2) + txt(0, -h + 30, o.plaque, sub(p, 0.7, 1), { size: 18, col: '#7a2f28' });
+  out += shape(rect(-w / 2 + 26, -96, 60, 50), sub(p, 0.5, 0.9), o.lit ? '#f7dc9a' : '#dde6e6', 2.4) + shape(rect(w / 2 - 86, -96, 60, 50), sub(p, 0.55, 0.95), o.lit ? '#f7dc9a' : '#dde6e6', 2.4);
+  out += ink(`M${-w / 2 + 56} -96v50M${w / 2 - 56} -96v50`, sub(p, 0.6, 0.95), 1.4);
+  return contactShadow(x, y + 3, w * 0.6 * s, p, 0.12) + at(x, y, s, out);
+}
+
+// ---- new props for v2 scenes ----
+function lamp(x, y, s, p, on = 1) {
+  return at(x, y, s, glowAt(0, 40, 260, 0.9 * on * eout(p)) + ink('M0 -60V0', p, 2) + shape('M-46 30L-26 -10H26L46 30Z', p, '#f3d38c', 2.4));
+}
+function calendar2(x, y, s, p, top, big, small) {
+  return at(x, y, s, shape(rect(-90, -110, 180, 210), p, '#fffaf0', 3) + shape(rect(-90, -110, 180, 48), p, C.red, 3) +
+    txt(0, -76, top, sub(p, 0.3, 0.8), { size: 26, col: '#fff' }) + txt(0, 20, big, sub(p, 0.4, 1), { size: 66, font: "'Noto Serif CJK TC', serif", weight: 900, width: 160 }) +
+    txt(0, 74, small, sub(p, 0.6, 1), { size: 22, width: 160 }) + ink('M-46 -122V-98M46 -122V-98', p, 4));
+}
+function plaque(x, y, s, p, label, sw = 0) {
+  return at(x, y, s, ink('M-70 -60L0 -110L70 -60', p, 2) + shape(circ(0, -112, 5), p, C.gold, 1.6) +
+    g(shape(rect(-150, -60, 300, 70, 0.4), p, '#7a2f28', 3) + shape(rect(-140, -52, 280, 54, 0.3), sub(p, 0.3, 0.8), '#fbe9c6', 1.6) +
+      txt(0, -14, label, sub(p, 0.4, 1), { size: 34, col: '#7a2f28' }), `rotate(${sw.toFixed(2)} 0 -110)`));
+}
+function confetti(x, y, t0, n = 24, spread = 260) {
+  if (CUR.t < t0) return '';
+  const k = CUR.t - t0;
+  if (k > 3.5) return '';
+  let out = '';
+  const cols = [C.red, C.gold, '#9dbbd6', C.leaf, C.pink];
+  for (let i = 0; i < n; i++) {
+    const a = -Math.PI / 2 + (hsh(i, x) - 0.5) * 2.2, v = 260 + hsh(i, y) * 260;
+    const px = x + Math.cos(a) * v * k * 0.8, py = y + Math.sin(a) * v * k + 260 * k * k;
+    out += op(1 - k / 3.5, at(px, py, 1, `<rect x="-5" y="-3" width="10" height="6" fill="${cols[i % 5]}" stroke="${INK}" stroke-width="1"/>`, k * 400 + i * 30));
+  }
+  return out;
+}
+function cart(x, y, s, p, boxes = 3) {
+  let out = '';
+  for (let i = 0; i < boxes; i++) out += shape(rect(-70 + i * 46, -70 - (i % 2) * 34, 44, 40, 0.5), sub(p, 0.3 + i * 0.1, 0.8), '#e3c497', 2.2) + ink(`M${-48 + i * 46} ${-70 - (i % 2) * 34}v40`, sub(p, 0.5, 1), 1.2, INK2);
+  out += shape(rect(-80, -30, 160, 20, 0.5), p, '#c9a77f', 2.6) + ink('M80 -24L120 -60', p, 4);
+  const rot = -CUR.T * 200;
+  out += at(-50, -6, 1, shape(circ(0, 0, 14), p, '#6a6159', 2.4) + ink('M-10 0H10M0 -10V10', p, 1.5, '#ddd'), rot) + at(50, -6, 1, shape(circ(0, 0, 14), p, '#6a6159', 2.4) + ink('M-10 0H10M0 -10V10', p, 1.5, '#ddd'), rot);
+  return contactShadow(x, y + 2, 90 * s, p) + at(x, y, s, out);
+}
+function donationBox(x, y, s, p, label = '募款箱') {
+  let out = shape(rect(-60, -110, 120, 110), p, '#e9a79c', 3) + shape(rect(-24, -114, 48, 8, 0.3), p, INK, 1.4) + txt(0, -50, label, sub(p, 0.4, 1), { size: 24, col: '#fff' });
+  out += heart(0, -80, 0.8, sub(p, 0.5, 1));
+  return contactShadow(x, y + 2, 70 * s, p) + at(x, y, s, out);
+}
+function coins(x, y, t0, n = 6) {
+  let out = '';
+  for (let i = 0; i < n; i++) {
+    const k = clamp((CUR.t - t0 - i * 0.45) / 0.8);
+    if (k <= 0 || k >= 1) continue;
+    out += at(x + (hsh(i) - 0.5) * 30, lerp(y - 200, y, k * k), 1, shape(ell(0, 0, 12, 12 * Math.abs(Math.cos(k * 9)) + 1, 12), 1, C.gold, 1.8));
+  }
+  return out;
+}
+function chest(x, y, s, p, label = '慈善基金') {
+  let out = shape(rect(-80, -90, 160, 90), p, '#b98f68', 3) + shape('M-84 -90Q0 -140 84 -90Z', p, '#a07b55', 3);
+  out += ink('M-80 -60H80', sub(p, 0.4, 1), 2) + shape(rect(-14, -76, 28, 32, 0.3), sub(p, 0.5, 1), C.gold, 2) + ink('M-8 -76q8 -20 16 0', sub(p, 0.6, 1), 3);
+  out += shape(rect(-70, -34, 140, 26, 0.3), sub(p, 0.6, 1), '#fbf1dc', 1.6) + txt(0, -14, label, sub(p, 0.7, 1), { size: 20 });
+  return contactShadow(x, y + 2, 90 * s, p) + at(x, y, s, out);
+}
+function certificate(x, y, s, p, title, line2 = '') {
+  let out = shape(rect(-170, -120, 340, 240), p, '#fffaf0', 3) + ink(rrect(-156, -106, 312, 212, 8), sub(p, 0.2, 0.7), 1.8, C.gold);
+  out += txt(0, -50, title, sub(p, 0.4, 0.9), { size: 38 });
+  if (line2) out += txt(0, 0, line2, sub(p, 0.5, 1), { size: 22, col: INK2 });
+  for (let i = 0; i < 3; i++) out += ink(sl(-120, 34 + i * 18, 120, 34 + i * 18, 0.6), sub(p, 0.6 + i * 0.1, 1), 1.4, INK2);
+  return at(x, y, s, out);
+}
+function scaffold(x, y, w, h, p) {
+  let out = '';
+  for (let i = 0; i <= 4; i++) out += ink(`M${x + i * w / 4} ${y}V${y - h}`, p, 3, '#8b7a66');
+  for (let j = 1; j <= 4; j++) out += ink(`M${x} ${y - j * h / 4}H${x + w}`, p, 2.4, '#8b7a66');
+  for (let i = 0; i < 4; i++) out += ink(`M${x + i * w / 4} ${y - (i % 2) * h / 2}L${x + (i + 1) * w / 4} ${y - h / 2 - (i % 2) * h / 2}`, p, 1.6, '#8b7a66');
+  return out;
+}
+function peopleIcons(x, y, n, cols = 10, size = 22, p = 1) {
+  let out = '';
+  for (let i = 0; i < n; i++) {
+    const c = i % cols, r = Math.floor(i / cols);
+    out += op(eout(clamp(p * n - i)), at(x + c * size * 1.2, y + r * size * 1.6, size / 22, shape(circ(0, -26, 6, 10), 1, C.skin, 1.4) + shape('M-9 -16Q0 -22 9 -16L8 0H-8Z', 1, ['#9dbbd6', '#e8c2b0', '#c9d8b0', '#f2d6a2', '#cfc0e0'][i % 5], 1.4)));
+  }
+  return out;
+}
+function medallion(x, y, s, p, name, role, who = {}) {
+  const id = `md${_clipId++}`;
+  let out = shape(circ(0, 0, 72, 24), p, '#fbf1dc', 3.2) + ink(circ(0, 0, 62, 24), sub(p, 0.2, 0.6), 1.6, C.gold);
+  out += `<clipPath id="${id}"><circle cx="0" cy="0" r="60"/></clipPath><g clip-path="url(#${id})">` + person(0, 150, 1.25, sub(p, 0.3, 1), { shirt: who.shirt || '#c9b79e', hair: who.hair || 'short', glasses: who.glasses, arms: [0.1, -0.1] }) + '</g>';
+  out += shape(rrect(-82, 78, 164, 58, 12), sub(p, 0.4, 0.9), '#fffaf0', 2.4) + txt(0, 106, name, sub(p, 0.5, 1), { size: 26 }) + txt(0, 128, role, sub(p, 0.6, 1), { size: 15, col: INK2 });
+  return at(x, y, s, out);
+}
+function flowersVase(x, y, s, p) {
+  let out = '';
+  for (let i = 0; i < 5; i++) {
+    const a = (i - 2) * 0.32, ex = Math.sin(a) * 70, ey = -120 - Math.cos(a) * 30;
+    out += ink(`M0 -40Q${ex * 0.4} -80 ${ex} ${ey}`, sub(p, 0.2, 0.6), 2, '#6f8a4d');
+    let petals = '';
+    for (let k = 0; k < 8; k++) petals += `<ellipse cx="0" cy="-9" rx="4" ry="9" transform="rotate(${k * 45})" fill="#fdfbf6" stroke="${INK2}" stroke-width="1.2"/>`;
+    out += op(eout(sub(p, 0.4 + i * 0.08, 0.9)), at(ex, ey, 1, petals + `<circle r="4" fill="${C.gold}"/>`));
+  }
+  out += shape('M-30 0Q-40 -30 -22 -44H22Q40 -30 30 0Z', p, '#e8e6e0', 2.6);
+  return at(x, y, s, out);
+}
+function candle(x, y, s, p) {
+  const T = CUR.T;
+  return at(x, y, s, shape(rect(-9, -60, 18, 60, 0.3), p, '#fbf6ea', 2) + glowAt(0, -74, 40, 0.8 * eout(p)) + op(eout(p), shape(`M0 -62Q-7 -74 ${Math.sin(T * 8) * 2} ${-88 - Math.sin(T * 11) * 3}Q7 -74 0 -62Z`, 1, '#f3b86b', 1.4)));
+}
+function riceStack(x, y, s, p, n = 6) {
+  let out = '';
+  const pos = [[-60, 0], [0, 0], [60, 0], [-30, -52], [30, -52], [0, -104]];
+  for (let i = 0; i < n; i++) out += at(pos[i][0], pos[i][1], 0.95, shape(`M-32 0Q-38 -40 -26 -52Q0 -58 26 -52Q38 -40 32 0Z`, sub(p, i * 0.1, 0.5 + i * 0.08), '#f6efdc', 2.2) + txt(0, -18, '米', sub(p, 0.4 + i * 0.08, 1), { size: 20, col: '#7a2f28' }));
+  return contactShadow(x, y + 2, 100 * s, p) + at(x, y, s, out);
+}
+function regionMap(x, y, s, p, counts = {}) {
+  // Stylised (not cartographic) bubbles for the three areas served.
+  const R = [['台南市', -260, -150, 150, '#dfe7c9'], ['高雄市', -20, 60, 190, '#f1dcc4'], ['屏東縣', 230, 170, 140, '#d9e6e7']];
+  let out = '';
+  R.forEach(([n, rx, ry, rr, col], i) => {
+    out += shape(ell(rx, ry, rr, rr * 0.8, 22, 0.12), sub(p, i * 0.15, 0.5 + i * 0.15), col, 3);
+    out += txt(rx, ry - rr * 0.45, n, sub(p, 0.3 + i * 0.15, 0.8 + i * 0.05), { size: 34 });
+  });
+  return at(x, y, s, out);
+}
+function dais(x, y, s, p, banner) {
+  let out = shape(rect(-420, -60, 840, 60), p, '#d9b48c', 3) + hatch(rect(-420, -60, 840, 60), p, 0.35);
+  out += tube('M-400 -60V-330', sub(p, 0.2, 0.6), '#e8e0d0', 8) + tube('M400 -60V-330', sub(p, 0.2, 0.6), '#e8e0d0', 8);
+  out += shape(rect(-380, -320, 760, 76, 0.4), sub(p, 0.4, 0.8), '#c95f52', 3) + txt(0, -268, banner, sub(p, 0.5, 1), { size: 38, col: '#fff7e6' });
+  return contactShadow(x, y + 2, 440 * s, p, 0.1) + at(x, y, s, out);
+}
+function districtFlag(x, y, s, p, label, col) {
+  const T = CUR.T, w = Math.sin(T * 3 + x) * 4;
+  return at(x, y, s, tube('M0 0V-150', sub(p, 0, 0.5), '#e8e0d0', 5) + shape(`M2 -148Q40 ${-156 + w} 80 -148L80 -104Q40 ${-112 - w} 2 -104Z`, sub(p, 0.3, 0.9), col, 2.2) + txt(40, -118, label, sub(p, 0.6, 1), { size: 22 }));
+}
+function outstretchedHand(x, y, s, p) {
+  const d = 'M-120 60Q-80 20 -40 10L40 -6Q64 -10 66 6Q66 18 46 22L20 28L70 22Q92 20 92 36Q90 50 70 52L22 58L64 60Q84 62 82 76Q80 90 60 90L-20 92Q-80 96 -120 120Z';
+  return at(x, y, s, shape(d, p, C.skin, 3.2) + ink('M30 32h20M28 62h18', sub(p, 0.6, 1), 1.6, INK2) + tube('M-120 90L-260 140', p, '#c9d8b0', 40));
+}

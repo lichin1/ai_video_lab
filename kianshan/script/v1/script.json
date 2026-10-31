@@ -1,0 +1,58 @@
+{
+  "title_zh": "高雄市堅山慈善會簡介",
+  "title_en": "An Introduction to the Kaohsiung Jianshan Charity Association",
+  "scenes": [
+    {"id": "s01_opening", "name": "開場：地點", "lines": [
+      {"zh": "高雄北邊的仁武，田野與街巷之間，住著一群熱心人。", "en": "In Renwu, north Kaohsiung, among fields and lanes, live warm-hearted people."},
+      {"zh": "他們相信，一點一滴的善意，能讓家鄉更溫暖。", "en": "They believe small acts of kindness can make their hometown warmer."}
+    ]},
+    {"id": "s02_title", "name": "片名卡", "lines": [
+      {"zh": "這是高雄市堅山慈善會的故事。", "en": "This is the story of the Kaohsiung Jianshan Charity Association."}
+    ]},
+    {"id": "s03_founding", "name": "慈善會成立", "lines": [
+      {"zh": "一群鄉親聚在一起，成立了堅山慈善會。", "en": "A group of neighbours came together and founded the association."},
+      {"zh": "會址設在仁武區仁林路，受高雄市社會局輔導。", "en": "Based on Renlin Road, Renwu, it works under the city's Social Affairs Bureau."}
+    ]},
+    {"id": "s04_chairs", "name": "歷任理事長", "lines": [
+      {"zh": "歷任理事長一棒接一棒，把善的火炬傳下去。", "en": "Chairperson after chairperson has carried the torch of kindness forward."},
+      {"zh": "陳國泰理事長與夫人吳惠豐女士，以身作則。", "en": "Chairman Chen Kuo-tai and his wife, Ms. Wu Hui-feng, led by example."},
+      {"zh": "他們走進社區，把關懷送到需要的人身邊。", "en": "They walked into the community, bringing care to those in need."}
+    ]},
+    {"id": "s05_scholarship", "name": "清寒優秀學生獎助學金", "lines": [
+      {"zh": "堅山最重要的工作之一，是清寒優秀學生獎助學金。", "en": "One of its key works is a scholarship for bright students in need."},
+      {"zh": "仁武、大樹、鳥松、大社等地區的孩子都受惠。", "en": "Children from Renwu, Dashu, Niaosong, Dashe and nearby benefit."},
+      {"zh": "也鼓勵高雄的大學生，學業與品德兼優。", "en": "It also encourages Kaohsiung university students to excel in study and character."},
+      {"zh": "一份獎學金，讓努力的孩子能安心讀書。", "en": "One scholarship lets a hard-working child study without worry."}
+    ]},
+    {"id": "s06_blood", "name": "觀音山捐血活動", "lines": [
+      {"zh": "每年，堅山至少舉辦一次捐血活動。", "en": "Every year, Jianshan holds at least one blood drive."},
+      {"zh": "二〇二四年五月，觀音山入口停了兩台捐血車。", "en": "In May 2024, two blood buses parked at the Guanyin Mountain entrance."},
+      {"zh": "志工備好冰涼茶水，熱情引導捐血民眾。", "en": "Volunteers served cool tea and warmly guided the donors."},
+      {"zh": "一天下來，募得三百七十二袋熱血。", "en": "By day's end, 372 bags of precious blood had been collected."},
+      {"zh": "李國忠理事長說，這是會友凝聚力與愛心的成果。", "en": "Chairman Li Kuo-chung called it the fruit of members' unity and love."}
+    ]},
+    {"id": "s07_rain", "name": "風雨中的志工", "lines": [
+      {"zh": "堅山也是登記在案的志工團隊，服務不分晴雨。", "en": "Jianshan is also a registered volunteer team, serving rain or shine."},
+      {"zh": "風雨中，志工撐起傘，把關懷送進巷弄。", "en": "Through wind and rain, volunteers carry care into the alleys."}
+    ]},
+    {"id": "s08_recent", "name": "最近動態", "lines": [
+      {"zh": "二〇二五年，獎助學金公文再次寄往各校。", "en": "In 2025, scholarship notices were once again sent to schools."},
+      {"zh": "讓更多孩子知道，有人在背後支持著他們。", "en": "So more children know that someone is standing behind them."}
+    ]},
+    {"id": "s09_ending", "name": "感人收尾", "lines": [
+      {"zh": "也許有一天，受助的孩子，也會成為助人的人。", "en": "Perhaps one day, the children who were helped will help others."},
+      {"zh": "善的循環，就從仁武這片土地，慢慢擴散。", "en": "A circle of kindness, spreading slowly from the land of Renwu."},
+      {"zh": "高雄市堅山慈善會，邀您一起，讓愛延續。", "en": "The Jianshan Charity Association invites you to keep love going."}
+    ]},
+    {"id": "s10_endcard", "name": "片尾字卡", "lines": []}
+  ],
+  "sources": [
+    {"label": "高雄市堅山慈善會 函（114年，致橋頭國中，獎助學金）", "url": "https://www.qtm.kh.edu.tw/upload/28/101_71085/114%E9%AB%98%E9%9B%84%E5%B8%82%E5%A0%85%E5%B1%B1%E6%85%88%E5%96%84%E6%9C%83.pdf"},
+    {"label": "高雄市堅山慈善會清寒優秀學生獎助學金發給要點（樹德科大）", "url": "https://wpc.stu.edu.tw/wp-content/uploads/sites/28/2021/10/%E7%8D%8E%E5%8A%A9%E5%AD%B8%E9%87%91%E7%99%BC%E7%B5%A6%E8%A6%81%E9%BB%9E%E9%AB%98%E9%9B%84%E5%B8%82%E5%A0%85%E5%B1%B1%E6%85%88%E5%96%84%E6%9C%83.pdf"},
+    {"label": "高雄餐旅大學：堅山慈善會獎助學金受理申請", "url": "https://student.nkuht.edu.tw/p/406-1005-8003,r145.php?Lang=zh-tw"},
+    {"label": "中華捐血運動協會：堅山慈善會於觀音山舉辦年度捐血活動", "url": "https://www.cbda.org.tw/magazine/Post/2392?vol=0"},
+    {"label": "高雄市志願服務資源中心：志工團隊介紹 高雄市堅山慈善會", "url": "https://www.kvc.org.tw/Unit_Content?id=4403"},
+    {"label": "高雄市政府社會局福利地圖", "url": "https://socmap.kcg.gov.tw/app32/homepage/appindex?ptype=2&frgcode=21&frgvalue=09&twnspcode=64000170"},
+    {"label": "衛福部志願服務資訊整合系統：高雄市堅山慈善會", "url": "https://vol.mohw.gov.tw/vol2/sysOrg/show/DByy6rP"}
+  ]
+}

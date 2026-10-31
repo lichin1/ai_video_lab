@@ -32,6 +32,7 @@ KOKORO = f"{MODELS}/kokoro-multi-lang-v1_1/"
 ASR = f"{MODELS}/sherpa-onnx-paraformer-zh-small-2024-03-09/"
 OUT = f"{ROOT}/audio/narration"
 OVERRIDE = f"{ROOT}/audio/narration_override"
+CACHE = f"{ROOT}/audio/narration_cache"
 SR = 48000
 
 # Spoken-form fixes applied only to the TTS input (subtitles keep the original).
@@ -109,7 +110,7 @@ def synth(tts, text, sid, speed):
     return y
 
 
-GEMINI_MODEL = os.environ.get("GEMINI_TTS_MODEL", "gemini-3.8-flash-lite-tts")
+GEMINI_MODEL = os.environ.get("GEMINI_TTS_MODEL", "gemini-3.8-flash-tts")
 STYLE = ("Read aloud in a warm, gentle storytelling tone, like a young woman from Taiwan "
          "speaking Taiwanese Mandarin, at an unhurried pace, pausing clearly between sentences: ")
 
@@ -133,7 +134,7 @@ def gemini_tts(text, voice):
                 raise RuntimeError(f"Gemini TTS {e.code}: {body_txt[:400]}")
             wait = e.headers.get("Retry-After")
             time.sleep(float(wait) if wait else min(90, 15 * (attempt + 1)))
-    time.sleep(float(os.environ.get("GEMINI_TTS_PACE", "6")))  # stay under the per-minute quota
+    time.sleep(float(os.environ.get("GEMINI_TTS_PACE", "35")))  # stay under the per-minute quota
     part = d["candidates"][0]["content"]["parts"][0]["inlineData"]
     raw, mt = base64.b64decode(part["data"]), part.get("mimeType", "")
     if "wav" in mt:
@@ -261,9 +262,25 @@ def main(engine, voice, speed):
             todo = [(i, ln) for i, ln in items if not os.path.exists(f"{OVERRIDE}/{i:02d}.wav")]
             if not todo:
                 continue
+            # takes are cached as soon as they arrive, so a quota stop never wastes them
+            cached = [f"{CACHE}/{i:02d}.wav" for i, _ in todo]
+            if all(os.path.exists(c) for c in cached):
+                for (i, _), c in zip(todo, cached):
+                    para[i] = sf.read(c, dtype="float32")[0]
+                print(f"lines {todo[0][0]}-{todo[-1][0]} from cache", flush=True)
+                continue
             pieces, errs = gemini_paragraph(asr, [ln["zh"] for _, ln in todo], voice, tries=1)
-            for (i, ln), p, e in zip(todo, pieces, errs):
-                para[i] = p if e <= 0.35 else gemini_checked(asr, ln["zh"], voice, tries=2)
+            os.makedirs(CACHE, exist_ok=True)
+            for (i, ln), p, e, c in zip(todo, pieces, errs, cached):
+                para[i] = p
+                sf.write(c, p, SR, subtype="PCM_16")
+            for (i, ln), e, c in zip(todo, errs, cached):
+                if e > 0.45:   # clear misread: re-read that line alone, keep the take if that fails
+                    try:
+                        para[i] = gemini_checked(asr, ln["zh"], voice, tries=1)
+                        sf.write(c, para[i], SR, subtype="PCM_16")
+                    except RuntimeError as err:
+                        print(f"line {i}: kept paragraph take ({err})"[:200], flush=True)
             print(f"lines {todo[0][0]}-{todo[-1][0]} in one take; CER {np.round(errs, 2).tolist()}", flush=True)
     for i, (scene, ln) in enumerate(ls, 1):
         path = f"{OUT}/{i:02d}.wav"
